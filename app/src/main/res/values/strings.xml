@@ -6,7 +6,7 @@
     <string name="description_post_likes">Likes</string>
     <string name="description_post_reposts">Reposts</string>
     <string name="description_post_views">Views</string>
-    <string name="temp_likes">50</string>
+    <string name="temp_likes">1009</string>
     <string name="temp_reposts">12</string>
     <string name="temp_views">6</string>
 </resources>
