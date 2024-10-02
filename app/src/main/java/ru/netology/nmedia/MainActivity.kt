@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
             content.text = post.content
             published.text = post.published
 
-            CountOfLikes.text = post.likes.toString()
-            CountOfReposts.text = post.reposts.toString()
+            CountOfLikes.text = calculateNumber(post.likes)
+            CountOfReposts.text = calculateNumber(post.reposts)
 
             Likes.setOnClickListener {
                 post.likedByMe = !post.likedByMe
