@@ -4,9 +4,17 @@
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_menu">Post menu</string>
     <string name="description_post_likes">Likes</string>
+    <string name="description_image_pencil">Likes</string>
+    <string name="description_image_cancel">Likes</string>
     <string name="description_post_reposts">Reposts</string>
     <string name="description_post_views">Views</string>
+    <string name="description_post_save">Save</string>
     <string name="temp_likes">1009</string>
     <string name="temp_reposts">12</string>
     <string name="temp_views">6</string>
+    <string name="menu_remove">Remove</string>
+    <string name="post_text">Post Text</string>
+    <string name="menu_edit">Edit</string>
+    <string name="error_empty_content">Content can\'t be empty</string>
+    <string name="edit_message">Edit message</string>
 </resources>

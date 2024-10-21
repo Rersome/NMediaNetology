@@ -5,7 +5,7 @@ import kotlin.math.round
 
 object CalculateValues {
 
-    fun calculateNumber(number: Int): String {
+    fun calculateNumber(number: Long): String {
         return when {
             number >= 1_000_000 -> String.format("%.1fM", number / 1_000_000.0)
             number >= 10_000 -> "${number / 1000}K"
