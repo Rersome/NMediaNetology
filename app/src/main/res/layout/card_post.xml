@@ -46,16 +46,18 @@
         app:layout_constraintTop_toBottomOf="@id/author"
         tools:text="@sample/posts.json/data/published" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/common_spacing"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_post_menu"
+        app:icon="@drawable/ic_baseline_more_vert_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_more_vert_24" />
+        app:iconGravity="end"
+        style="@style/Widget.AppThem.MenuButton"/>
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -77,56 +79,35 @@
         app:layout_constraintBottom_toTopOf="@id/barrier_bottom"
         tools:text="@sample/posts.json/data/content" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/Likes"
-        android:layout_width="@dimen/common_spacing_for_attributes"
-        android:layout_height="@dimen/common_spacing_for_attributes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
         android:layout_marginTop="@dimen/common_spacing"
         android:contentDescription="@string/description_post_likes"
-        app:layout_constraintEnd_toStartOf="@id/Count_Of_Likes"
+        app:icon="@drawable/ic_baseline_favorite_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier_bottom"
-        app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+        style="@style/Widget.AppThem.LikeButton"/>
 
-    <TextView
-        android:id="@+id/Count_Of_Likes"
-        android:layout_width="@dimen/posts_avatar_size"
-        android:layout_height="@dimen/common_spacing_for_attributes"
-        android:layout_marginTop="@dimen/common_spacing"
-        android:layout_marginStart="@dimen/little_spacing_for_attributes"
-        android:layout_marginEnd="@dimen/common_spacing_for_attributes"
-        android:text="@string/temp_likes"
-        app:layout_constraintEnd_toStartOf="@id/Reposts"
-        app:layout_constraintStart_toEndOf="@id/Likes"
-        app:layout_constraintTop_toBottomOf="@id/barrier_bottom" />
-
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/Reposts"
-        android:layout_width="@dimen/common_spacing_for_attributes"
-        android:layout_height="@dimen/common_spacing_for_attributes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/posts_avatar_size"
         android:layout_marginTop="@dimen/common_spacing"
         android:contentDescription="@string/description_post_reposts"
-        app:layout_constraintEnd_toStartOf="@id/Count_Of_Reposts"
-        app:layout_constraintStart_toEndOf="@id/Count_Of_Likes"
+        app:layout_constraintStart_toEndOf="@id/Likes"
         app:layout_constraintTop_toBottomOf="@id/barrier_bottom"
-        app:srcCompat="@drawable/ic_baseline_polyline_24" />
-
-    <TextView
-        android:id="@+id/Count_Of_Reposts"
-        android:layout_width="@dimen/posts_avatar_size"
-        android:layout_height="@dimen/common_spacing_for_attributes"
-        android:layout_marginTop="@dimen/common_spacing"
-        android:layout_marginStart="@dimen/little_spacing_for_attributes"
-        android:layout_marginEnd="@dimen/common_spacing_for_attributes"
-        android:text="@string/temp_reposts"
-        app:layout_constraintStart_toEndOf="@id/Reposts"
-        app:layout_constraintTop_toBottomOf="@id/barrier_bottom" />
+        app:icon="@drawable/ic_baseline_polyline_24"
+        style="@style/Widget.AppThem.ShareButton"/>
 
     <TextView
         android:id="@+id/Count_Of_Views"
-        android:layout_width="@dimen/common_spacing_for_attributes"
-        android:layout_height="@dimen/common_spacing_for_attributes"
-        android:layout_marginTop="@dimen/common_spacing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_icons"
         android:layout_marginStart="@dimen/little_spacing_for_attributes"
         android:layout_marginEnd="@dimen/common_spacing"
         android:text="@string/temp_views"
@@ -137,7 +118,7 @@
         android:id="@+id/Views"
         android:layout_width="@dimen/common_spacing_for_attributes"
         android:layout_height="@dimen/common_spacing_for_attributes"
-        android:layout_marginTop="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/margin_icons"
         android:layout_marginEnd="@dimen/little_spacing_for_attributes"
         android:contentDescription="@string/description_post_views"
         app:srcCompat="@drawable/ic_baseline_remove_red_eye_24"

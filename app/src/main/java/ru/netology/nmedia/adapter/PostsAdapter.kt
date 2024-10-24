@@ -49,8 +49,11 @@ class PostViewHolder(
             content.text = post.content
             published.text = post.published
 
-            Likes.setImageResource(
-                if (post.likedByMe) R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24)
+            Likes.isChecked = post.likedByMe
+            Likes.text = post.likes.toString()
+
+            Reposts.text = post.reposts.toString()
+
 
             Likes.setOnClickListener {
                 onInteractionListener.onLike(post)
@@ -79,8 +82,8 @@ class PostViewHolder(
                 }.show()
             }
 
-            CountOfLikes.text = calculateNumber(post.likes)
-            CountOfReposts.text = calculateNumber(post.reposts)
+            Likes.text = calculateNumber(post.likes)
+            Reposts.text = calculateNumber(post.reposts)
         }
     }
 }
