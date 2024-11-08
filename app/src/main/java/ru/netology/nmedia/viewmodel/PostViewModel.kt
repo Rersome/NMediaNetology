@@ -3,7 +3,6 @@ package ru.netology.nmedia.viewmodel
 import android.icu.util.Calendar
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.DiffUtil
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryInMemoryImpl
@@ -18,13 +17,28 @@ private val empty = Post(
     likedByMe = false,
 )
 
-class PostViewModel: ViewModel() {
+class PostViewModel : ViewModel() {
 
     private val repository: PostRepository = PostRepositoryInMemoryImpl()
 
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
     private var isEditingCanceled = false
+
+    fun save() {
+        edited.value?.let {
+            repository.save(it)
+        }
+        edited.value = empty
+    }
+
+    fun changeContent(content: String) {
+        val text = content.trim()
+        if (edited.value?.content == text) {
+            return
+        }
+        edited.value = edited.value?.copy(content = text)
+    }
 
     fun applyChangeAndSave(newText: String) {
         if (isEditingCanceled) {
