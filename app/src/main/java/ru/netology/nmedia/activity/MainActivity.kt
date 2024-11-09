@@ -1,7 +1,6 @@
 package ru.netology.nmedia.activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.R
@@ -58,13 +57,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        viewModel.edited.observe(this) {
-//            if (it.id != 0L) {
-//                binding.originalText.setText(it.content)
-//                binding.content.setText(it.content)
-//                binding.content.focusAndShowKeyboard()
-//            }
-//        }
 //
 //        binding.save.setOnClickListener {
 //            val text = binding.content.text.toString()

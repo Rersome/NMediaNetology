@@ -25,21 +25,6 @@ class PostViewModel : ViewModel() {
     val edited = MutableLiveData(empty)
     private var isEditingCanceled = false
 
-    fun save() {
-        edited.value?.let {
-            repository.save(it)
-        }
-        edited.value = empty
-    }
-
-    fun changeContent(content: String) {
-        val text = content.trim()
-        if (edited.value?.content == text) {
-            return
-        }
-        edited.value = edited.value?.copy(content = text)
-    }
-
     fun applyChangeAndSave(newText: String) {
         if (isEditingCanceled) {
             isEditingCanceled = false
@@ -53,8 +38,23 @@ class PostViewModel : ViewModel() {
         edited.value = empty
     }
 
+    fun save() {
+        edited.value?.let {
+            repository.save(it)
+        }
+        edited.value = empty
+    }
+
     fun edit(post: Post) {
         edited.value = post
+    }
+
+    fun changeContent(content: String) {
+        val text = content.trim()
+        if (edited.value?.content == text) {
+            return
+        }
+        edited.value = edited.value?.copy(content = text)
     }
 
     fun cancelEdit() {

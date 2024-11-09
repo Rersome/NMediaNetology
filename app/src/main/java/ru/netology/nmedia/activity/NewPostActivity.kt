@@ -22,21 +22,24 @@ class NewPostActivity : AppCompatActivity() {
         }
 
         binding.imageOfCancel.setOnClickListener {
+//            val content = binding.edit.text.toString()
             val intent = Intent()
             setResult(RESULT_CANCELED, intent)
             viewModel.cancelEdit()
+//            viewModel.changeContent(content)
             finish()
         }
 
         binding.edit.requestFocus()
         binding.ok.setOnClickListener {
             val intent = Intent()
-            if (binding.edit.text.isNullOrBlank()) {
+            if (binding.edit.text.isNullOrBlank() || binding.edit.text.isEmpty()) {
                 setResult(Activity.RESULT_CANCELED, intent)
             } else {
                 val content = binding.edit.text.toString()
                 intent.putExtra(Intent.EXTRA_TEXT, content)
                 setResult(Activity.RESULT_OK, intent)
+
             }
             finish()
         }

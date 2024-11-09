@@ -31,8 +31,8 @@
 
     <ImageView
         android:id="@+id/image_of_cancel"
-        android:layout_width="@dimen/common_spacing_for_attributes"
-        android:layout_height="@dimen/common_spacing_for_attributes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/description_image_cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
