@@ -1,11 +1,14 @@
 package ru.netology.nmedia.activity
+
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.R
-import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         val viewModel: PostViewModel by viewModels()
         val adapter = PostsAdapter(object : OnInteractionListener {
+
             override fun onLike(post: Post) {
                 viewModel.likeById(post.id)
             }
@@ -28,9 +32,18 @@ class MainActivity : AppCompatActivity() {
                     putExtra(Intent.EXTRA_TEXT, post.content)
                     type = "text/plain"
                 }
-                val shareIntent = Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                val shareIntent =
+                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
                 viewModel.shareById(post.id)
+            }
+
+            override fun startVideo(post: Post) {
+                if (!post.video.isNullOrEmpty()) {
+                    val shareYoutubeLink =
+                        Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
+                    startActivity(shareYoutubeLink)
+                }
             }
 
             override fun onRemove(post: Post) {
@@ -39,13 +52,15 @@ class MainActivity : AppCompatActivity() {
 
             val newEditingLauncher = registerForActivityResult(NewPostResultContract()) { result ->
                 result ?: return@registerForActivityResult
-                viewModel.applyChangeAndSave(result)
+                //viewModel.applyChangeAndSave(result)
+                Log.d("Test", result)
             }
 
             override fun onEdit(post: Post) {
                 viewModel.edit(post)
                 newEditingLauncher.launch(post.content)
             }
+
         })
         binding.list.adapter = adapter
         viewModel.data.observe(this) { posts ->
@@ -57,31 +72,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//
-//        binding.save.setOnClickListener {
-//            val text = binding.content.text.toString()
-//            if (text.isBlank()) {
-//                Toast.makeText(this@MainActivity, R.string.error_empty_content, Toast.LENGTH_SHORT)
-//                    .show()
-//                return@setOnClickListener
-//            }
-//            viewModel.applyChangeAndSave(text)
-//
-//            binding.content.setText("")
-//            binding.content.clearFocus()
-//            AndroidUtils.hideKeyboard(it)
-//        }
-//
-//        binding.imageOfCancel.setOnClickListener {
-//            binding.content.setText("")
-//            binding.content.clearFocus()
-//            AndroidUtils.hideKeyboard(it)
-//            viewModel.cancelEdit()
-//        }
-
         val newPostLauncher = registerForActivityResult(NewPostResultContract()) { result ->
             result ?: return@registerForActivityResult
             viewModel.applyChangeAndSave(result)
+            Log.d("Test", result)
         }
 
         binding.fab.setOnClickListener {

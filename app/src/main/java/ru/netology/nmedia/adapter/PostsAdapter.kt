@@ -1,7 +1,9 @@
 package ru.netology.nmedia.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.CalculateValues.calculateNumber
+
 import ru.netology.nmedia.dto.Post
 
 interface OnInteractionListener {
@@ -16,6 +19,7 @@ interface OnInteractionListener {
     fun onShare(post: Post)
     fun onRemove(post: Post)
     fun onEdit(post: Post)
+    fun startVideo(post: Post)
 }
 
 class PostsAdapter(
@@ -41,7 +45,8 @@ class PostsAdapter(
 
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val onInteractionListener: OnInteractionListener
+    private val onInteractionListener: OnInteractionListener,
+    private val videoButton: ImageButton = binding.video
 ): RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post){
         binding.apply {
@@ -54,13 +59,21 @@ class PostViewHolder(
 
             Reposts.text = post.reposts.toString()
 
-
             Likes.setOnClickListener {
                 onInteractionListener.onLike(post)
             }
 
             Reposts.setOnClickListener {
                 onInteractionListener.onShare(post)
+            }
+
+            if (post.video.isEmpty()) {
+                videoButton.visibility = View.GONE
+            } else {
+                videoButton.visibility = View.VISIBLE
+                videoButton.setOnClickListener {
+                    onInteractionListener.startVideo(post)
+                }
             }
 
             menu.setOnClickListener {

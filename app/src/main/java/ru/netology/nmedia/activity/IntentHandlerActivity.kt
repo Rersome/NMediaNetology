@@ -28,6 +28,7 @@ class IntentHandlerActivity : AppCompatActivity() {
                     .setAction(getString(R.string.OK)) {
                         finish()
                     }.show()
+                return@let
             }
         }
     }

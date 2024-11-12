@@ -1,32 +1,30 @@
 package ru.netology.nmedia.activity
-
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.databinding.ActivityNewPostBinding
-import ru.netology.nmedia.viewmodel.PostViewModel
 
 class NewPostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel: PostViewModel by viewModels()
         val binding = ActivityNewPostBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.edit.requestFocus()
         val postText = intent.getStringExtra(Intent.EXTRA_TEXT)
+
+        setContentView(binding.root)
 
         if (!postText.isNullOrBlank()) {
             binding.edit.setText(postText)
         }
 
         binding.imageOfCancel.setOnClickListener {
-//            val content = binding.edit.text.toString()
             val intent = Intent()
-            setResult(RESULT_CANCELED, intent)
-            viewModel.cancelEdit()
-//            viewModel.changeContent(content)
+            setResult(Activity.RESULT_CANCELED, intent)
+            finish()
+        }
+        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+            val intent = Intent()
+            setResult(Activity.RESULT_CANCELED, intent)
             finish()
         }
 
@@ -39,7 +37,6 @@ class NewPostActivity : AppCompatActivity() {
                 val content = binding.edit.text.toString()
                 intent.putExtra(Intent.EXTRA_TEXT, content)
                 setResult(Activity.RESULT_OK, intent)
-
             }
             finish()
         }

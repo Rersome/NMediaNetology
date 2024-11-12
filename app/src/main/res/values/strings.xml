@@ -4,8 +4,8 @@
     <string name="description_post_author_avatar">Post author avatar</string>
     <string name="description_post_menu">Post menu</string>
     <string name="description_post_likes">Likes</string>
-    <string name="description_image_pencil">Likes</string>
-    <string name="description_image_cancel">Likes</string>
+    <string name="description_image_pencil">Pencil</string>
+    <string name="description_image_cancel">Cancel</string>
     <string name="description_post_reposts">Reposts</string>
     <string name="description_post_views">Views</string>
     <string name="description_post_save">Save</string>
@@ -20,4 +20,5 @@
     <string name="chooser_share_post">Share post</string>
     <string name="OK">OK</string>
     <string name="add_post">Add post</string>
+    <string name="error_no_youtube_link">No youtube link</string>
 </resources>

@@ -1,6 +1,7 @@
 package ru.netology.nmedia.viewmodel
 
 import android.icu.util.Calendar
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.netology.nmedia.dto.Post
@@ -15,6 +16,7 @@ private val empty = Post(
     content = "",
     published = Calendar.getInstance().time.toString(), //TODO переделать
     likedByMe = false,
+    video = ""
 )
 
 class PostViewModel : ViewModel() {
@@ -26,6 +28,7 @@ class PostViewModel : ViewModel() {
     private var isEditingCanceled = false
 
     fun applyChangeAndSave(newText: String) {
+        Log.d("MyTag", "Значение result: $isEditingCanceled")
         if (isEditingCanceled) {
             isEditingCanceled = false
         }
@@ -38,28 +41,14 @@ class PostViewModel : ViewModel() {
         edited.value = empty
     }
 
-    fun save() {
-        edited.value?.let {
-            repository.save(it)
-        }
-        edited.value = empty
-    }
-
     fun edit(post: Post) {
         edited.value = post
-    }
-
-    fun changeContent(content: String) {
-        val text = content.trim()
-        if (edited.value?.content == text) {
-            return
-        }
-        edited.value = edited.value?.copy(content = text)
     }
 
     fun cancelEdit() {
         isEditingCanceled = true
         edited.value = empty
+        Log.d("MyTag", "Значение result: $isEditingCanceled")
     }
 
     fun likeById(id: Long) = repository.likeById(id)

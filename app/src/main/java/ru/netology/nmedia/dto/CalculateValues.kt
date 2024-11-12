@@ -1,8 +1,5 @@
 package ru.netology.nmedia.dto
 
-import kotlin.math.floor
-import kotlin.math.round
-
 object CalculateValues {
 
     fun calculateNumber(number: Long): String {
