@@ -17,6 +17,6 @@ class NewPostResultContract : ActivityResultContract<String?, String?>() {
         if (resultCode == Activity.RESULT_OK) {
             intent?.getStringExtra(Intent.EXTRA_TEXT)
         } else {
-            ""
+            null
         }
 }

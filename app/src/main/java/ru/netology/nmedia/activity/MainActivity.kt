@@ -52,9 +52,10 @@ class MainActivity : AppCompatActivity() {
 
             val newEditingLauncher = registerForActivityResult(NewPostResultContract()) { result ->
                 result ?: return@registerForActivityResult
-                if (result.isEmpty())
-                    viewModel.cancelEdit() else
-                    viewModel.applyChangeAndSave(result)
+                viewModel.applyChangeAndSave(result)
+//                if (result.isEmpty())
+//                    viewModel.cancelEdit() else
+//                    viewModel.applyChangeAndSave(result)
             }
 
             override fun onEdit(post: Post) {
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fab.setOnClickListener {
+            viewModel.cancelEdit()
             newPostLauncher.launch(null)
         }
     }

@@ -17,16 +17,11 @@ class NewPostActivity : AppCompatActivity() {
             binding.edit.setText(postText)
         }
 
-        binding.imageOfCancel.setOnClickListener {
-            val intent = Intent()
-            setResult(Activity.RESULT_CANCELED, intent)
-            finish()
-        }
-        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-            val intent = Intent()
-            setResult(Activity.RESULT_CANCELED, intent)
-            finish()
-        }
+//        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+//            val intent = Intent()
+//            setResult(Activity.RESULT_CANCELED, intent)
+//            finish()
+//        }
 
         binding.edit.requestFocus()
         binding.ok.setOnClickListener {
