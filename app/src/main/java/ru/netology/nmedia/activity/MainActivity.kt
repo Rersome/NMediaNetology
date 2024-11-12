@@ -52,8 +52,9 @@ class MainActivity : AppCompatActivity() {
 
             val newEditingLauncher = registerForActivityResult(NewPostResultContract()) { result ->
                 result ?: return@registerForActivityResult
-                //viewModel.applyChangeAndSave(result)
-                Log.d("Test", result)
+                if (result.isEmpty())
+                    viewModel.cancelEdit() else
+                    viewModel.applyChangeAndSave(result)
             }
 
             override fun onEdit(post: Post) {
