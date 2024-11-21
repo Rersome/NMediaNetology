@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.FragmentCardPostBinding
 import ru.netology.nmedia.dto.CalculateValues.calculateNumber
 
 import ru.netology.nmedia.dto.Post
@@ -20,6 +20,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post)
     fun onEdit(post: Post)
     fun startVideo(post: Post)
+    fun onPostClick(post: Post)
 }
 
 class PostsAdapter(
@@ -33,18 +34,20 @@ class PostsAdapter(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = FragmentCardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding, onInteractionListener)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
+
+        holder.itemView.setOnClickListener { onInteractionListener.onPostClick(post) }
     }
 }
 
 class PostViewHolder(
-    private val binding: CardPostBinding,
+    private val binding: FragmentCardPostBinding,
     private val onInteractionListener: OnInteractionListener,
     private val videoButton: ImageButton = binding.video
 ): RecyclerView.ViewHolder(binding.root) {
