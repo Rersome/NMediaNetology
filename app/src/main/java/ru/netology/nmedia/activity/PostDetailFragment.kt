@@ -11,12 +11,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.databinding.FragmentCardPostBinding
+import ru.netology.nmedia.databinding.CardPostBinding
+import ru.netology.nmedia.databinding.DetailedFragmentCardPostBinding
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class PostDetailFragment: Fragment() {
-    private lateinit var binding: FragmentCardPostBinding
+    private lateinit var binding: DetailedFragmentCardPostBinding
 
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
@@ -25,23 +26,23 @@ class PostDetailFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCardPostBinding.inflate(inflater, container, false)
+        binding = DetailedFragmentCardPostBinding.inflate(inflater, container, false)
 
         val postId = arguments?.idArg ?: -1
         viewModel.data.observe(viewLifecycleOwner) { posts ->
             val post = posts.find { it.id == postId } ?: return@observe
             with (binding) {
-                binding.author.text = post.author
-                binding.content.text = post.content
-                binding.published.text = post.published
-                binding.Likes.text = post.likes.toString()
-                binding.Reposts.text = post.reposts.toString()
-                binding.Likes.isChecked = post.likedByMe
+                binding.cardPost.author.text = post.author
+                binding.cardPost.content.text = post.content
+                binding.cardPost.published.text = post.published
+                binding.cardPost.Likes.text = post.likes.toString()
+                binding.cardPost.Reposts.text = post.reposts.toString()
+                binding.cardPost.Likes.isChecked = post.likedByMe
             }
-            binding.Likes.setOnClickListener {
+            binding.cardPost.Likes.setOnClickListener {
                 viewModel.likeById(postId)
             }
-            binding.Reposts.setOnClickListener {
+            binding.cardPost.Reposts.setOnClickListener {
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, post.content)
@@ -52,7 +53,7 @@ class PostDetailFragment: Fragment() {
                 startActivity(shareIntent)
                 viewModel.shareById(postId)
             }
-            binding.menu.setOnClickListener {
+            binding.cardPost.menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.menu_post)
                     setOnMenuItemClickListener { item ->
@@ -65,7 +66,7 @@ class PostDetailFragment: Fragment() {
                             R.id.edit -> {
                                 viewModel.edit(post)
                                 findNavController().navigate(
-                                    R.id.action_postDetailFragment_to_newPostFragment,
+                                    R.id.action_detailedFragmentCardPost_to_newPostFragment,
                                     Bundle().apply {
                                         textArg = post.content
                                     }

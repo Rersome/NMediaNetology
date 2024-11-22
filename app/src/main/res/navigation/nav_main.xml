@@ -14,7 +14,7 @@
             android:id="@+id/action_feedFragment_to_newPostFragment"
             app:destination="@id/newPostFragment" />
         <action
-            android:id="@+id/action_feedFragment_to_postDetailFragment"
+            android:id="@+id/action_feedFragment_to_detailedFragmentCardPost"
             app:destination="@id/postDetailFragment" />
     </fragment>
     <fragment
@@ -25,10 +25,10 @@
     <fragment
         android:id="@+id/postDetailFragment"
         android:name="ru.netology.nmedia.activity.PostDetailFragment"
-        android:label="post_detail_fragment"
-        tools:layout="@layout/fragment_card_post" >
+        android:label="detailed_fragment_card_post"
+        tools:layout="@layout/detailed_fragment_card_post">
         <action
-            android:id="@+id/action_postDetailFragment_to_newPostFragment"
+            android:id="@+id/action_detailedFragmentCardPost_to_newPostFragment"
             app:destination="@id/newPostFragment" />
     </fragment>
 </navigation>
