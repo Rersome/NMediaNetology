@@ -23,10 +23,6 @@ class NewPostFragment : Fragment() {
 
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
-//        if (postText.isNotBlank()) {
-//            binding.edit.setText(postText)
-//        }
-
         binding.edit.requestFocus()
         binding.ok.setOnClickListener {
             val postText = binding.edit.text.toString()
