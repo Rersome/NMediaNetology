@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_post_author_avatar">Аватарка автора</string>
+    <string name="description_post_menu">Меню поста</string>
+    <string name="description_post_likes">Лайки</string>
+    <string name="description_image_cancel">Отмена</string>
+    <string name="description_post_reposts">Репосты</string>
+    <string name="description_post_views">Просмотры</string>
+    <string name="description_post_save">Сохранить</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="post_text">Текст поста</string>
+    <string name="menu_edit">Изменить</string>
+    <string name="error_empty_content">Контент не может быть пустым</string>
+    <string name="edit_message">Изменить сообщение</string>
+    <string name="chooser_share_post">Поделиться постом</string>
+    <string name="add_post">Добавить пост</string>
+    <string name="error_no_youtube_link">Отсутствует ссылка на ютуб</string>
+    <string name="channel_name">Уведомления</string>
+    <string name="like_notification">Пользователю %1$s понравился %2$s пост</string>
+    <string name="share_notification">Пользователь %1$s поделился %2$s постом</string>
+    <string name="newPost_notification">Пользователь %1$s опубликовал новый пост</string>
+</resources>
