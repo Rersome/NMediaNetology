@@ -1,12 +1,10 @@
 package ru.netology.nmedia.viewmodel
 
 import android.app.Application
-import android.icu.util.Calendar
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedState
 import ru.netology.nmedia.repository.PostRepository
@@ -87,7 +85,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         thread {
             _data.postValue(
                 currentState.copy(
-                    posts = currentState.posts.map {if (it.id != id) it else it.copy(likedByMe = !it.likedByMe, likes = it.likes + if (it.likedByMe) -1 else 1)}
+                    posts = currentState.posts.map {if (it.id != id) it else it.copy(likedByMe = !it.likedByMe, video = "", likes = it.likes + if (it.likedByMe) -1 else 1)}
                 )
             )
             try {
@@ -101,12 +99,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
     fun shareById(id: Long) {
         val currentState = _data.value ?: return
         thread {
             _data.postValue(
                 currentState.copy(
-                    posts = currentState.posts.map {if (it.id != id) it else it.copy(reposts = it.reposts + 1)}
+                    posts = currentState.posts.map { if (it.id != id) it else it.copy(reposts = it.reposts + 1, video = "") }
                 )
             )
             try {
