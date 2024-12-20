@@ -19,4 +19,7 @@
     <string name="like_notification">Пользователю %1$s понравился %2$s пост</string>
     <string name="share_notification">Пользователь %1$s поделился %2$s постом</string>
     <string name="newPost_notification">Пользователь %1$s опубликовал новый пост</string>
+    <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="retry">Переподключаемся</string>
+    <string name="there_s_no_posts">Посты отсутствуют</string>
 </resources>
