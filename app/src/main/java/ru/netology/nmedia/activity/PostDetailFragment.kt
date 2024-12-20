@@ -15,7 +15,7 @@ import ru.netology.nmedia.databinding.DetailedFragmentCardPostBinding
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-class PostDetailFragment: Fragment() {
+class PostDetailFragment : Fragment() {
     private lateinit var binding: DetailedFragmentCardPostBinding
 
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
@@ -30,7 +30,7 @@ class PostDetailFragment: Fragment() {
         val postId = arguments?.idArg ?: -1
         viewModel.data.observe(viewLifecycleOwner) { state ->
             val post = state.posts.find { it.id == postId } ?: return@observe
-            with (binding) {
+            with(binding) {
                 binding.cardPost.author.text = post.author
                 binding.cardPost.content.text = post.content
                 binding.cardPost.published.text = post.published.toString()
@@ -62,6 +62,7 @@ class PostDetailFragment: Fragment() {
                                 findNavController().navigateUp()
                                 true
                             }
+
                             R.id.edit -> {
                                 viewModel.edit(post)
                                 findNavController().navigate(
@@ -72,6 +73,7 @@ class PostDetailFragment: Fragment() {
                                 )
                                 true
                             }
+
                             else -> false
                         }
                     }
@@ -80,6 +82,7 @@ class PostDetailFragment: Fragment() {
         }
         return binding.root
     }
+
     companion object {
         var Bundle.idArg by LongArg
     }

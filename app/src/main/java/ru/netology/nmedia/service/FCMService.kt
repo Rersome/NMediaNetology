@@ -42,11 +42,13 @@ class FCMService : FirebaseMessagingService() {
                     val like = gson.fromJson<Like>(content, Like::class.java)
                     handleLike(like)
                 }
+
                 ACTION.SHARE -> {
                     val content = message.data["content"]
                     val share = gson.fromJson<Share>(content, Share::class.java)
                     handleShare(share)
                 }
+
                 ACTION.NEWPOST -> {
                     val content = message.data["content"]
                     val newPost = gson.fromJson<NewPost>(content, NewPost::class.java)
@@ -78,7 +80,13 @@ class FCMService : FirebaseMessagingService() {
     private fun handleShare(share: Share) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification_24dp)
-            .setContentTitle(getString(R.string.share_notification, share.userName, share.postAuthor))
+            .setContentTitle(
+                getString(
+                    R.string.share_notification,
+                    share.userName,
+                    share.postAuthor
+                )
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
@@ -91,10 +99,18 @@ class FCMService : FirebaseMessagingService() {
     private fun handleNewPost(newPost: NewPost) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification_24dp)
-            .setContentTitle(getString(R.string.newPost_notification, newPost.userName, newPost.postAuthor))
+            .setContentTitle(
+                getString(
+                    R.string.newPost_notification,
+                    newPost.userName,
+                    newPost.postAuthor
+                )
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(newPost.postText))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(newPost.postText)
+            )
             .build()
 
         val notificationManager =

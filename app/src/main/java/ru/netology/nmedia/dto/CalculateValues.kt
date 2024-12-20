@@ -12,6 +12,7 @@ object CalculateValues {
                 "$firstDigit.$secondDigit" + "K"
                 //String.format("%.1fK", round(number / 1_000.0))
             }
+
             else -> number.toString()
         }
     }

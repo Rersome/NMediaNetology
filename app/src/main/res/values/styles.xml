@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+
     <style name="Widget.AppThem.LikeButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
         <item name="iconTint">@color/like_checkbox_tint</item>
         <item name="android:textColor">@color/black</item>

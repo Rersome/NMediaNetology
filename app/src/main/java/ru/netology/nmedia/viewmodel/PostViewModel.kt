@@ -47,7 +47,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             thread {
                 val text = newText.trim()
                 if (text.isNotEmpty() && text != it.content) {
-                    repository.save(it.copy(content = text, published = it.published))
+                    repository.save(it.copy(content = text))
                     _postCreated.postValue(Unit)
                     edited.postValue(empty)
                 }
@@ -85,7 +85,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         thread {
             _data.postValue(
                 currentState.copy(
-                    posts = currentState.posts.map {if (it.id != id) it else it.copy(likedByMe = !it.likedByMe, video = "", likes = it.likes + if (it.likedByMe) -1 else 1)}
+                    posts = currentState.posts.map {
+                        if (it.id != id) it else
+                            it.copy(
+                                likedByMe = !it.likedByMe,
+                                video = "",
+                                likes = it.likes + if (it.likedByMe) -1 else 1
+                            )
+                    }
                 )
             )
             try {
@@ -105,7 +112,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         thread {
             _data.postValue(
                 currentState.copy(
-                    posts = currentState.posts.map { if (it.id != id) it else it.copy(reposts = it.reposts + 1, video = "") }
+                    posts = currentState.posts.map {
+                        if (it.id != id) it else it.copy(
+                            reposts = it.reposts + 1,
+                            video = ""
+                        )
+                    }
                 )
             )
             try {

@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import ru.netology.nmedia.dto.Post
 
 @Entity
-data class PostEntity (
+data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
@@ -24,7 +24,8 @@ data class PostEntity (
         likes,
         reposts,
         likedByMe,
-        video)
+        video
+    )
 
     companion object {
         fun fromDto(post: Post) = PostEntity(
@@ -35,6 +36,7 @@ data class PostEntity (
             post.likes,
             post.reposts,
             post.likedByMe,
-            post.video)
+            post.video
+        )
     }
 }

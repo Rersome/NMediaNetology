@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation libs.firebase.crashlytics.buildtools
     def room_version = "2.6.1"
     def firebase_version = "33.6.0"
     def okhttp_version = "4.12.0"

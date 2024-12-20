@@ -29,14 +29,14 @@
         app:layout_anchor="@id/bottomAppBar"
         app:srcCompat="@drawable/ic_ok_24dp" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/image_of_cancel"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:contentDescription="@string/description_image_cancel"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:srcCompat="@drawable/ic_baseline_cancel_24"-->
-<!--        tools:ignore="MissingConstraints" />-->
+    <!--    <ImageView-->
+    <!--        android:id="@+id/image_of_cancel"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:contentDescription="@string/description_image_cancel"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:srcCompat="@drawable/ic_baseline_cancel_24"-->
+    <!--        tools:ignore="MissingConstraints" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

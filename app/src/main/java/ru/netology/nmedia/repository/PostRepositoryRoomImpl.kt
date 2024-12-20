@@ -1,4 +1,5 @@
 package ru.netology.nmedia.repository
+
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType.Companion.toMediaType
@@ -8,7 +9,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nmedia.dto.Post
 import java.util.concurrent.TimeUnit
 
-class PostRepositoryRoomImpl: PostRepository {
+class PostRepositoryRoomImpl : PostRepository {
 
     private val client = OkHttpClient.Builder()
         .callTimeout(30, TimeUnit.SECONDS)
@@ -16,8 +17,8 @@ class PostRepositoryRoomImpl: PostRepository {
 
     private val gson = Gson()
 
-    private val typeToken = object : TypeToken<List<Post>> () {
-        
+    private val typeToken = object : TypeToken<List<Post>>() {
+
     }
 
     private companion object {

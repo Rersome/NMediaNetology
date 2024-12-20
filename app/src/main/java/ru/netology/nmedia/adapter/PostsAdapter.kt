@@ -25,7 +25,7 @@ interface OnInteractionListener {
 
 class PostsAdapter(
     private val onInteractionListener: OnInteractionListener
-): ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
+) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
 
     var list = emptyList<Post>()
         set(value) {
@@ -50,8 +50,8 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
     private val videoButton: ImageButton = binding.video
-): RecyclerView.ViewHolder(binding.root) {
-    fun bind(post: Post){
+) : RecyclerView.ViewHolder(binding.root) {
+    fun bind(post: Post) {
         binding.apply {
             author.text = post.author
             content.text = post.content
@@ -88,10 +88,12 @@ class PostViewHolder(
                                 onInteractionListener.onRemove(post)
                                 true
                             }
+
                             R.id.edit -> {
                                 onInteractionListener.onEdit(post)
                                 true
                             }
+
                             else -> false
                         }
                     }
@@ -104,7 +106,7 @@ class PostViewHolder(
     }
 }
 
-class PostDiffCallback: DiffUtil.ItemCallback<Post>(){
+class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem == newItem
