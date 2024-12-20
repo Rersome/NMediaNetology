@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
+import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
 
@@ -28,9 +29,15 @@ class NewPostFragment : Fragment() {
             val postText = binding.edit.text.toString()
             if (postText.isNotBlank()) {
                 viewModel.applyChangeAndSave(postText)
+                AndroidUtils.hideKeyboard(requireView())
             }
+        }
+
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.load()
             findNavController().navigateUp()
         }
+
         return binding.root
     }
 

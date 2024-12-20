@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
-import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.databinding.DetailedFragmentCardPostBinding
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -29,12 +28,12 @@ class PostDetailFragment: Fragment() {
         binding = DetailedFragmentCardPostBinding.inflate(inflater, container, false)
 
         val postId = arguments?.idArg ?: -1
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val post = posts.find { it.id == postId } ?: return@observe
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            val post = state.posts.find { it.id == postId } ?: return@observe
             with (binding) {
                 binding.cardPost.author.text = post.author
                 binding.cardPost.content.text = post.content
-                binding.cardPost.published.text = post.published
+                binding.cardPost.published.text = post.published.toString()
                 binding.cardPost.Likes.text = post.likes.toString()
                 binding.cardPost.Reposts.text = post.reposts.toString()
                 binding.cardPost.Likes.isChecked = post.likedByMe

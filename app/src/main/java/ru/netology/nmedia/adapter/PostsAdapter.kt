@@ -55,7 +55,7 @@ class PostViewHolder(
         binding.apply {
             author.text = post.author
             content.text = post.content
-            published.text = post.published
+            published.text = post.published.toString()
 
             Likes.isChecked = post.likedByMe
             Likes.text = post.likes.toString()
@@ -70,7 +70,7 @@ class PostViewHolder(
                 onInteractionListener.onShare(post)
             }
 
-            if (post.video.isEmpty()) {
+            if (post.video.isNullOrBlank()) {
                 videoButton.visibility = View.GONE
             } else {
                 videoButton.visibility = View.VISIBLE

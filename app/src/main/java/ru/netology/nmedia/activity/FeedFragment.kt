@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -48,7 +49,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun startVideo(post: Post) {
-                if (!post.video.isNullOrEmpty()) {
+                if (post.video.isNotBlank()) {
                     val shareYoutubeLink =
                         Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
                     startActivity(shareYoutubeLink)
@@ -80,13 +81,19 @@ class FeedFragment : Fragment() {
 
         })
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val newPost = posts.size > adapter.currentList.size && adapter.currentList.isNotEmpty()
-            adapter.submitList(posts) {
-                if (newPost) {
-                    binding.list.smoothScrollToPosition(0)
-                }
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.swipeRefresh.setOnRefreshListener {
+                viewModel.load()
+                binding.swipeRefresh.isRefreshing = false
             }
+            binding.errorGroup.isVisible = state.error
+            binding.empty.isVisible = state.empty
+            binding.progress.isVisible = state.loading
+        }
+
+        binding.retry.setOnClickListener {
+            viewModel.load()
         }
 
         binding.fab.setOnClickListener {

@@ -1,24 +1,113 @@
 package ru.netology.nmedia.repository
-
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
-import ru.netology.nmedia.dao.PostDao
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.entity.PostEntity
+import java.util.concurrent.TimeUnit
 
-class PostRepositoryRoomImpl(
-    private val dao: PostDao
-) : PostRepository {
+class PostRepositoryRoomImpl: PostRepository {
 
-    override fun getAll(): LiveData<List<Post>> = dao.getAll().map {
-        it.map { it.toDto() }
+    private val client = OkHttpClient.Builder()
+        .callTimeout(30, TimeUnit.SECONDS)
+        .build()
+
+    private val gson = Gson()
+
+    private val typeToken = object : TypeToken<List<Post>> () {
+        
     }
 
-    override fun save(post: Post) = dao.save(PostEntity.fromDto(post))
+    private companion object {
+        const val BASE_URL = "http://10.0.2.2:9999/"
+        val jsonType = "application/json".toMediaType()
+    }
 
-    override fun likeById(id: Long) = dao.likeById(id)
+    override fun getAll(): List<Post> {
+        val request = Request.Builder()
+            .url("${BASE_URL}api/posts")
+            .build()
 
-    override fun shareById(id: Long) = dao.shareById(id)
+        val call = client.newCall(request)
 
-    override fun removeById(id: Long) = dao.removeById(id)
+        val response = call.execute()
+
+        val body = response.body ?: error("Body is null")
+
+        return gson.fromJson(body.string(), typeToken)
+
+    }
+
+    override fun save(post: Post): Post {
+        val request = Request.Builder()
+            .url("${BASE_URL}api/posts")
+            .post(gson.toJson(post).toRequestBody(jsonType))
+            .build()
+
+        val call = client.newCall(request)
+
+        val response = call.execute()
+
+        val body = response.body ?: error("Body is null")
+
+        return gson.fromJson(body.string(), Post::class.java)
+    }
+
+    override fun likeById(id: Long): Post {
+        val request = Request.Builder()
+            .url("${BASE_URL}api/posts/$id/likes")
+            .post(gson.toJson(id).toRequestBody(jsonType))
+            .build()
+
+        val call = client.newCall(request)
+
+        val response = call.execute()
+
+        val body = response.body ?: error("Body is null")
+
+        return gson.fromJson(body.string(), Post::class.java)
+    }
+
+    override fun unlikeById(id: Long): Post {
+        val request = Request.Builder()
+            .url("${BASE_URL}api/posts/$id/likes")
+            .delete(gson.toJson(id).toRequestBody(jsonType))
+            .build()
+
+        val call = client.newCall(request)
+
+        val response = call.execute()
+
+        val body = response.body ?: error("Body is null")
+
+        return gson.fromJson(body.string(), Post::class.java)
+    }
+
+    override fun shareById(id: Long): Post {
+        val request = Request.Builder()
+            .url("${BASE_URL}api/posts/$id/reposts")
+            .post(gson.toJson(id).toRequestBody(jsonType))
+            .build()
+
+        val call = client.newCall(request)
+
+        val response = call.execute()
+
+        val body = response.body ?: error("Body is null")
+
+        return gson.fromJson(body.string(), Post::class.java)
+    }
+
+    override fun removeById(id: Long) {
+        val request = Request.Builder()
+            .delete()
+            .url("${BASE_URL}api/slow/posts/$id")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
+    }
 }
