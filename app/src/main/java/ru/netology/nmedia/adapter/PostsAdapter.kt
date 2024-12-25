@@ -19,7 +19,7 @@ interface OnInteractionListener {
     fun onShare(post: Post)
     fun onRemove(post: Post)
     fun onEdit(post: Post)
-    fun startVideo(post: Post)
+//    fun startVideo(post: Post)
     fun onPostClick(post: Post)
 }
 
@@ -70,14 +70,14 @@ class PostViewHolder(
                 onInteractionListener.onShare(post)
             }
 
-            if (post.video.isNullOrBlank()) {
-                videoButton.visibility = View.GONE
-            } else {
-                videoButton.visibility = View.VISIBLE
-                videoButton.setOnClickListener {
-                    onInteractionListener.startVideo(post)
-                }
-            }
+//            if (post.video.isNullOrBlank()) {
+//                videoButton.visibility = View.GONE
+//            } else {
+//                videoButton.visibility = View.VISIBLE
+//                videoButton.setOnClickListener {
+//                    onInteractionListener.startVideo(post)
+//                }
+//            }
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

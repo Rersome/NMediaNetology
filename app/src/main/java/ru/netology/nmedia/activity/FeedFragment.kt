@@ -1,7 +1,6 @@
 package ru.netology.nmedia.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,13 +47,13 @@ class FeedFragment : Fragment() {
                 viewModel.shareById(post.id)
             }
 
-            override fun startVideo(post: Post) {
-                if (post.video.isNotBlank()) {
-                    val shareYoutubeLink =
-                        Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
-                    startActivity(shareYoutubeLink)
-                }
-            }
+//            override fun startVideo(post: Post) {
+//                if (post.video.isNotBlank()) {
+//                    val shareYoutubeLink =
+//                        Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
+//                    startActivity(shareYoutubeLink)
+//                }
+//            }
 
             override fun onPostClick(post: Post) {
                 findNavController().navigate(
@@ -84,7 +83,7 @@ class FeedFragment : Fragment() {
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
             binding.swipeRefresh.setOnRefreshListener {
-                viewModel.load()
+                viewModel.loadPosts()
                 binding.swipeRefresh.isRefreshing = false
             }
             binding.errorGroup.isVisible = state.error
@@ -93,7 +92,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.retry.setOnClickListener {
-            viewModel.load()
+            viewModel.loadPosts()
         }
 
         binding.fab.setOnClickListener {

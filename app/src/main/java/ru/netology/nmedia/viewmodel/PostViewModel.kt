@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.model.FeedState
+import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryRoomImpl
+import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 import kotlin.concurrent.thread
 
@@ -19,23 +19,22 @@ private val empty = Post(
     author = "",
     content = "",
     published = 0L, //TODO переделать
-    likedByMe = false,
-    video = ""
+    likedByMe = false
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: PostRepository = PostRepositoryRoomImpl()
-    private val _data = MutableLiveData(FeedState())
+    private val repository: PostRepository = PostRepositoryImpl()
+    private val _data = MutableLiveData(FeedModel())
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit> = _postCreated
 
-    val data: LiveData<FeedState> = _data
+    val data: LiveData<FeedModel> = _data
     val edited = MutableLiveData(empty)
     private var isEditingCanceled = false
 
     init {
-        load()
+        loadPosts()
     }
 
     fun applyChangeAndSave(newText: String) {
@@ -44,13 +43,22 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             isEditingCanceled = false
         }
         edited.value?.let {
-            thread {
-                val text = newText.trim()
-                if (text.isNotEmpty() && text != it.content) {
-                    repository.save(it.copy(content = text))
-                    _postCreated.postValue(Unit)
-                    edited.postValue(empty)
-                }
+            val text = newText.trim()
+            if (text.isNotEmpty() && text != it.content) {
+                repository.save(
+                    it.copy(content = text),
+                    object : PostRepository.PostCallback<Post> {
+                        override fun onSuccess(result: Post) {
+                            loadPosts()
+                        }
+
+                        override fun onError(error: Throwable) {
+                            _data.postValue(FeedModel(error = true))
+                        }
+                    }
+                )
+                _postCreated.postValue(Unit)
+                edited.postValue(empty)
             }
         }
     }
@@ -59,19 +67,20 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = post
     }
 
-    fun load() {
-        thread {
-            _data.postValue(FeedState(loading = true))
+    fun loadPosts() {
+        _data.postValue(FeedModel(loading = true))
 
-            val state = try {
-                val posts = repository.getAll()
+        repository.getAllAsync(
+            object : PostRepository.PostCallback<List<Post>> {
+                override fun onSuccess(result: List<Post>) {
+                    _data.postValue(FeedModel(posts = result, empty = result.isEmpty()))
+                }
 
-                FeedState(posts = posts, empty = posts.isEmpty())
-            } catch (e: Exception) {
-                FeedState(error = true)
+                override fun onError(error: Throwable) {
+                    _data.postValue(FeedModel(error = true))
+                }
             }
-            _data.postValue(state)
-        }
+        )
     }
 
     fun cancelEdit() {
@@ -82,28 +91,37 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun likeById(id: Long) {
         val currentState = _data.value ?: return
-        thread {
-            _data.postValue(
-                currentState.copy(
-                    posts = currentState.posts.map {
-                        if (it.id != id) it else
-                            it.copy(
-                                likedByMe = !it.likedByMe,
-                                video = "",
-                                likes = it.likes + if (it.likedByMe) -1 else 1
-                            )
-                    }
-                )
-            )
-            try {
-                if (!currentState.posts.find { it.id == id }!!.likedByMe) {
-                    repository.likeById(id)
-                } else {
-                    repository.unlikeById(id)
+        _data.postValue(
+            currentState.copy(
+                posts = currentState.posts.map {
+                    if (it.id != id) it else
+                        it.copy(
+                            likedByMe = !it.likedByMe,
+                            likes = it.likes + if (it.likedByMe) -1 else 1
+                        )
                 }
-            } catch (e: Exception) {
-                _data.postValue(currentState)
-            }
+            )
+        )
+        if (!currentState.posts.find { it.id == id }!!.likedByMe) {
+            repository.likeById(id, object : PostRepository.PostCallback<Post> {
+                override fun onSuccess(result: Post) {
+
+                }
+
+                override fun onError(error: Throwable) {
+                    _data.postValue(FeedModel(error = true))
+                }
+            })
+        } else {
+            repository.unlikeById(id, object : PostRepository.PostCallback<Post> {
+                override fun onSuccess(result: Post) {
+
+                }
+
+                override fun onError(error: Throwable) {
+                    _data.postValue(FeedModel(error = true))
+                }
+            })
         }
     }
 
@@ -115,16 +133,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     posts = currentState.posts.map {
                         if (it.id != id) it else it.copy(
                             reposts = it.reposts + 1,
-                            video = ""
                         )
                     }
                 )
             )
-            try {
-                repository.shareById(id)
-            } catch (e: Exception) {
-                _data.postValue(currentState)
-            }
+            repository.shareById(id, object : PostRepository.PostCallback<Post> {
+                override fun onSuccess(result: Post) {
+
+                }
+
+                override fun onError(error: Throwable) {
+                    _data.postValue(FeedModel(error = true))
+                }
+            })
         }
     }
 
@@ -136,11 +157,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     posts = currentState.posts.filter { it.id != id }
                 )
             )
-            try {
-                repository.removeById(id)
-            } catch (e: Exception) {
-                _data.postValue(currentState)
-            }
+            repository.removeById(id, object : PostRepository.PostCallback<Unit> {
+                override fun onSuccess(result: Unit) {
+
+                }
+
+                override fun onError(error: Throwable) {
+                    _data.postValue(FeedModel(error = true))
+                }
+            })
         }
     }
 }
