@@ -86,7 +86,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun cancelEdit() {
         isEditingCanceled = true
         edited.value = empty
-        //Log.d("MyTag", "Значение result: $isEditingCanceled")
     }
 
     fun likeById(id: Long) {

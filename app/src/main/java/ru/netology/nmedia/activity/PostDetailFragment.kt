@@ -9,6 +9,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.DetailedFragmentCardPostBinding
@@ -37,6 +38,42 @@ class PostDetailFragment : Fragment() {
                 binding.cardPost.Likes.text = post.likes.toString()
                 binding.cardPost.Reposts.text = post.reposts.toString()
                 binding.cardPost.Likes.isChecked = post.likedByMe
+                val avatarUrl = "http://10.0.2.2:9999/avatars/"
+                val imageUrl = "http://10.0.2.2:9999/images/"
+
+                when (post.author){
+                    "Сбер" -> Glide.with(this@PostDetailFragment)
+                        .load(avatarUrl + post.authorAvatar)
+                        .timeout(30_000)
+                        .circleCrop()
+                        .into(cardPost.avatar)
+                    "Тинькофф" -> Glide.with(this@PostDetailFragment)
+                        .load(avatarUrl + post.authorAvatar)
+                        .timeout(30_000)
+                        .circleCrop()
+                        .into(cardPost.avatar)
+                    "Netology" -> Glide.with(this@PostDetailFragment)
+                        .load(avatarUrl + post.authorAvatar)
+                        .timeout(30_000)
+                        .circleCrop()
+                        .into(cardPost.avatar)
+                }
+
+                if (post.attachment != null) {
+                    when (post.author) {
+                        "Сбер" -> Glide.with(this@PostDetailFragment)
+                            .load(imageUrl + post.attachment.url)
+                            .timeout(30_000)
+                            .into(cardPost.descriptionImage)
+                        "Netology" -> Glide.with(this@PostDetailFragment)
+                            .load(imageUrl + post.attachment.url)
+                            .timeout(30_000)
+                            .into(cardPost.descriptionImage)
+                    }
+                    binding.cardPost.descriptionImage.visibility = View.VISIBLE
+                } else {
+                    binding.cardPost.descriptionImage.visibility = View.GONE
+                }
             }
             binding.cardPost.Likes.setOnClickListener {
                 viewModel.likeById(postId)

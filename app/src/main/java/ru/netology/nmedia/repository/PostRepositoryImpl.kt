@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.Call
@@ -18,6 +19,7 @@ class PostRepositoryImpl : PostRepository {
     private val client = OkHttpClient.Builder()
         .callTimeout(30, TimeUnit.SECONDS)
         .build()
+
 
     private val gson = Gson()
 
