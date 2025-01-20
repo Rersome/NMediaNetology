@@ -50,7 +50,7 @@ class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
 
-) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
 
         binding.apply {
@@ -61,35 +61,18 @@ class PostViewHolder(
             val avatarUrl = "http://10.0.2.2:9999/avatars/"
             val imageUrl = "http://10.0.2.2:9999/images/"
 
-            when (post.author){
-                "Сбер" -> Glide.with(itemView.context)
-                    .load(avatarUrl + post.authorAvatar)
-                    .timeout(30_000)
-                    .circleCrop()
-                    .into(avatar)
-                "Тинькофф" -> Glide.with(itemView.context)
-                    .load(avatarUrl + post.authorAvatar)
-                    .timeout(30_000)
-                    .circleCrop()
-                    .into(avatar)
-                "Netology" -> Glide.with(itemView.context)
-                    .load(avatarUrl + post.authorAvatar)
-                    .timeout(30_000)
-                    .circleCrop()
-                    .into(avatar)
-            }
+            Glide.with(itemView.context)
+                .load(avatarUrl + post.authorAvatar)
+                .timeout(30_000)
+                .circleCrop()
+                .into(avatar)
 
             if (post.attachment != null) {
-                when (post.author) {
-                    "Сбер" -> Glide.with(itemView.context)
-                        .load(imageUrl + post.attachment.url)
-                        .timeout(30_000)
-                        .into(descriptionImage)
-                    "Netology" -> Glide.with(itemView.context)
-                        .load(imageUrl + post.attachment.url)
-                        .timeout(30_000)
-                        .into(descriptionImage)
-                }
+                Glide.with(itemView.context)
+                    .load(imageUrl + post.attachment.url)
+                    .timeout(30_000)
+                    .into(descriptionImage)
+
                 binding.descriptionImage.visibility = View.VISIBLE
             } else {
                 binding.descriptionImage.visibility = View.GONE

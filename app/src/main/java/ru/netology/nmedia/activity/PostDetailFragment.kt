@@ -38,43 +38,32 @@ class PostDetailFragment : Fragment() {
                 binding.cardPost.Likes.text = post.likes.toString()
                 binding.cardPost.Reposts.text = post.reposts.toString()
                 binding.cardPost.Likes.isChecked = post.likedByMe
+
                 val avatarUrl = "http://10.0.2.2:9999/avatars/"
                 val imageUrl = "http://10.0.2.2:9999/images/"
 
-                when (post.author){
-                    "Сбер" -> Glide.with(this@PostDetailFragment)
-                        .load(avatarUrl + post.authorAvatar)
-                        .timeout(30_000)
-                        .circleCrop()
-                        .into(cardPost.avatar)
-                    "Тинькофф" -> Glide.with(this@PostDetailFragment)
-                        .load(avatarUrl + post.authorAvatar)
-                        .timeout(30_000)
-                        .circleCrop()
-                        .into(cardPost.avatar)
-                    "Netology" -> Glide.with(this@PostDetailFragment)
-                        .load(avatarUrl + post.authorAvatar)
-                        .timeout(30_000)
-                        .circleCrop()
-                        .into(cardPost.avatar)
-                }
+                Glide.with(this@PostDetailFragment)
+                    .load(avatarUrl + post.authorAvatar)
+                    .timeout(30_000)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_baseline_data_usage_24)
+                    .error(R.drawable.ic_baseline_cancel_24)
+                    .into(cardPost.avatar)
 
                 if (post.attachment != null) {
-                    when (post.author) {
-                        "Сбер" -> Glide.with(this@PostDetailFragment)
-                            .load(imageUrl + post.attachment.url)
-                            .timeout(30_000)
-                            .into(cardPost.descriptionImage)
-                        "Netology" -> Glide.with(this@PostDetailFragment)
-                            .load(imageUrl + post.attachment.url)
-                            .timeout(30_000)
-                            .into(cardPost.descriptionImage)
-                    }
+                    Glide.with(this@PostDetailFragment)
+                        .load(imageUrl + post.attachment.url)
+                        .timeout(30_000)
+                        .placeholder(R.drawable.ic_baseline_data_usage_24)
+                        .error(R.drawable.ic_baseline_cancel_24)
+                        .into(cardPost.descriptionImage)
+
                     binding.cardPost.descriptionImage.visibility = View.VISIBLE
                 } else {
                     binding.cardPost.descriptionImage.visibility = View.GONE
                 }
             }
+
             binding.cardPost.Likes.setOnClickListener {
                 viewModel.likeById(postId)
             }
