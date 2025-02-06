@@ -17,6 +17,7 @@ import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.FeedError
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
@@ -48,14 +49,6 @@ class FeedFragment : Fragment() {
                 viewModel.shareById(post.id)
             }
 
-//            override fun startVideo(post: Post) {
-//                if (post.video.isNotBlank()) {
-//                    val shareYoutubeLink =
-//                        Intent(Intent.ACTION_VIEW, Uri.parse(post.video))
-//                    startActivity(shareYoutubeLink)
-//                }
-//            }
-
             override fun onPostClick(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_detailedFragmentCardPost,
@@ -83,15 +76,26 @@ class FeedFragment : Fragment() {
         binding.list.adapter = adapter
         viewModel.data.observe(viewLifecycleOwner) { state ->
             adapter.submitList(state.posts)
-            if (state.error) {
-                Snackbar.make(binding.root, "Возникла непредвиденная ошибка", Snackbar.LENGTH_LONG).show()
-            }
             binding.swipeRefresh.setOnRefreshListener {
                 viewModel.loadPosts()
                 binding.swipeRefresh.isRefreshing = false
             }
-            binding.errorGroup.isVisible = state.error
             binding.empty.isVisible = state.empty
+        }
+
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            if (state.error != FeedError.NONE) {
+                //binding.errorGroup.isVisible = true
+                Snackbar.make(binding.root, "Error: ${state.error}", Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry){
+                        viewModel.loadPosts()
+                    }
+                    .setAnchorView(binding.fab)
+                    .show()
+            }
+//            else {
+//                binding.errorGroup.isVisible = false
+//            }
             binding.progress.isVisible = state.loading
         }
 
