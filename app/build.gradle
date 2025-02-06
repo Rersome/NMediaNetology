@@ -53,6 +53,7 @@ dependencies {
     def glide_version = "4.16.0"
     def retrofit_version = "2.11.0"
     def okhttplogging_version = "4.12.0"
+    def coroutine_version = "1.9.0"
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.activity.ktx.v192
@@ -73,6 +74,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:$glide_version")
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version")
+    implementation("androidx.room:room-ktx:$room_version")
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core

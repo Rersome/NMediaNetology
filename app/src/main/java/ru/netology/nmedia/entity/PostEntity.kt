@@ -14,7 +14,6 @@ data class PostEntity(
     val likes: Long = 0,
     val reposts: Long = 0,
     val likedByMe: Boolean = false,
-//    val video: String
 ) {
     fun toDto() = Post(
         id,
@@ -24,7 +23,6 @@ data class PostEntity(
         likes,
         reposts,
         likedByMe,
-//        video
     )
 
     companion object {
@@ -36,7 +34,14 @@ data class PostEntity(
             post.likes,
             post.reposts,
             post.likedByMe,
-//            post.video
         )
     }
+}
+
+fun List<Post>.toEntity() = map {
+    PostEntity.fromDto(it)
+}
+
+fun List<PostEntity>.toDto() = map {
+    it.toDto()
 }
