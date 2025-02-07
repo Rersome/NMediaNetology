@@ -50,8 +50,8 @@ interface PostApiService {
     @POST("posts/{id}/likes")
     suspend fun likeById(@Path("id") id: Long): Response<Post>
 
-    @POST("posts/{id}/likes")
-    suspend fun unLikeById(@Path("id") id: Long): Response<Post>
+    @DELETE("posts/{id}/likes")
+    suspend fun unlikeById(@Path("id") id: Long): Response<Post>
 
     @POST("posts/{id}/reposts")
     suspend fun shareById(@Path("id") id: Long): Response<Post>

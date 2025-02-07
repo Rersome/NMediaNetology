@@ -101,11 +101,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         try {
             val post = data.value?.posts?.find { it.id == id }
             post?.let {
-                val updatedPost = it.copy(
+                it.copy(
                     likedByMe = !it.likedByMe,
                     likes = it.likes + if (it.likedByMe) -1 else 1
                 )
-                repository.save(updatedPost)
 
                 if (it.likedByMe) {
                     repository.unlikeById(id)
@@ -133,11 +132,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun removeById(id: Long) = viewModelScope.launch {
         try {
-            val post = data.value?.posts?.find { it.id == id } ?: throw RuntimeException("Post not found")
+            val post =
+                data.value?.posts?.find { it.id == id } ?: throw RuntimeException("Post not found")
             post?.let {
                 repository.removeById(id)
             }
-            repository.removeById(id)
         } catch (e: AppError) {
             when (e) {
                 is ApiError -> _dataState.value = FeedModelState(FeedError.API)
