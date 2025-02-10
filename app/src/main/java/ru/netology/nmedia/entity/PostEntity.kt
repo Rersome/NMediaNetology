@@ -16,7 +16,6 @@ data class PostEntity(
     val likes: Long = 0,
     val reposts: Long = 0,
     val likedByMe: Boolean = false,
-    //val attachment: Attachment? = null
 )
 
 {
