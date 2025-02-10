@@ -38,49 +38,60 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override suspend fun likeById(id: Long) {
+        dao.likeById(id)
+
         try {
             val response = PostApi.service.likeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
-            val post = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.likeById(id)
+            response.body() ?: throw ApiError(response.code(), response.message())
+
         } catch (e: ApiError) {
+            dao.unLikeById(id)
             throw e
         } catch (_: Exception) {
+            dao.unLikeById(id)
             throw UnknownError
         } catch (_: IOException) {
+            dao.unLikeById(id)
             throw NetworkError
         }
     }
 
     override suspend fun unlikeById(id: Long) {
+        dao.unLikeById(id)
+
         try {
             val response = PostApi.service.unLikeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
-            val post = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.unLikeById(id)
+            response.body() ?: throw ApiError(response.code(), response.message())
+
         } catch (e: ApiError) {
+            dao.likeById(id)
             throw e
         } catch (_: Exception) {
+            dao.likeById(id)
             throw UnknownError
         } catch (_: IOException) {
+            dao.likeById(id)
             throw NetworkError
         }
     }
 
     override suspend fun shareById(id: Long) {
+        dao.shareById(id)
+
         try {
             val response = PostApi.service.shareById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
-            dao.shareById(id)
         } catch (e: ApiError) {
             throw e
         } catch (_: Exception) {
@@ -91,12 +102,14 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override suspend fun removeById(id: Long) {
+        dao.removeById(id)
+
         try {
             val response = PostApi.service.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            dao.removeById(id)
+
         } catch (e: ApiError) {
             throw e
         } catch (_: Exception) {

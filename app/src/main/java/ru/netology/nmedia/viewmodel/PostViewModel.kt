@@ -101,11 +101,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         try {
             val post = data.value?.posts?.find { it.id == id }
             post?.let {
-                val updatedPost = it.copy(
+                it.copy(
                     likedByMe = !it.likedByMe,
                     likes = it.likes + if (it.likedByMe) -1 else 1
                 )
-                repository.save(updatedPost)
 
                 if (it.likedByMe) {
                     repository.unlikeById(id)
