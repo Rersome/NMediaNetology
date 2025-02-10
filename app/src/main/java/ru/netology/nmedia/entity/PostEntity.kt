@@ -29,7 +29,6 @@ data class PostEntity(
         likes = likes,
         reposts = reposts,
         likedByMe = likedByMe,
-        //attachment = attachment
     )
 
     companion object {
@@ -42,7 +41,6 @@ data class PostEntity(
             likes = post.likes,
             reposts = post.reposts,
             likedByMe = post.likedByMe,
-            //attachment = post.attachment
         )
     }
 }
