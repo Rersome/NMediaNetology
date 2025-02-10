@@ -85,7 +85,6 @@ class FeedFragment : Fragment() {
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             if (state.error != FeedError.NONE) {
-                //binding.errorGroup.isVisible = true
                 Snackbar.make(binding.root, "Error: ${state.error}", Snackbar.LENGTH_LONG)
                     .setAction(R.string.retry){
                         viewModel.loadPosts()
@@ -93,9 +92,6 @@ class FeedFragment : Fragment() {
                     .setAnchorView(binding.fab)
                     .show()
             }
-//            else {
-//                binding.errorGroup.isVisible = false
-//            }
             binding.progress.isVisible = state.loading
         }
 
