@@ -2,6 +2,7 @@ package ru.netology.nmedia.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.Post
 
 @Entity
@@ -16,6 +17,8 @@ data class PostEntity(
     val reposts: Long = 0,
     val likedByMe: Boolean = false
 ) {
+
+
     fun toDto() = Post(
         id = id,
         author = author,

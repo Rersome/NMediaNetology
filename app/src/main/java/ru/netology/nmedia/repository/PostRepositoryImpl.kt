@@ -64,7 +64,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         dao.unLikeById(id)
 
         try {
-            val response = PostApi.service.unLikeById(id)
+            val response = PostApi.service.unlikeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -92,6 +92,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
                 throw ApiError(response.code(), response.message())
             }
 
+            response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: ApiError) {
             throw e
         } catch (_: Exception) {
@@ -110,6 +111,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
                 throw ApiError(response.code(), response.message())
             }
 
+            response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: ApiError) {
             throw e
         } catch (_: Exception) {
@@ -120,14 +122,15 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override suspend fun save(post: Post) {
+        dao.save(PostEntity.fromDto(post))
+
         try {
             val response = PostApi.service.save(post)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
 
-            val post = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.save(PostEntity.fromDto(post))
+            response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: ApiError) {
             throw e
         } catch (_: Exception) {
