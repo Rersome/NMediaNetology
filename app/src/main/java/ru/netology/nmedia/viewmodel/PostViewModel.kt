@@ -105,7 +105,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     likedByMe = !it.likedByMe,
                     likes = it.likes + if (it.likedByMe) -1 else 1
                 )
-
                 if (it.likedByMe) {
                     repository.unlikeById(id)
                 } else {
