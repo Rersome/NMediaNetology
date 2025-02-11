@@ -16,6 +16,7 @@ data class PostEntity(
     val likes: Long = 0,
     val reposts: Long = 0,
     val likedByMe: Boolean = false,
+    val sent: Boolean = false
 )
 
 {
@@ -28,6 +29,7 @@ data class PostEntity(
         likes = likes,
         reposts = reposts,
         likedByMe = likedByMe,
+        sent = sent
     )
 
     companion object {
@@ -40,6 +42,7 @@ data class PostEntity(
             likes = post.likes,
             reposts = post.reposts,
             likedByMe = post.likedByMe,
+            sent = post.sent
         )
     }
 }

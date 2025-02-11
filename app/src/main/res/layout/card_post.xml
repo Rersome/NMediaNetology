@@ -27,6 +27,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier_bottom" />
 
+    <ImageButton
+        android:id="@+id/image_of_sent"
+        android:layout_width="@dimen/common_spacing"
+        android:layout_height="@dimen/common_spacing"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:contentDescription="@string/description_post_author_avatar"
+        android:visibility="gone"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content"
+        app:srcCompat="@drawable/ic_baseline_running_with_errors_24"/>
+
 
     <TextView
         android:id="@+id/author"
@@ -112,28 +124,6 @@
         app:icon="@drawable/ic_baseline_polyline_24"
         app:layout_constraintStart_toEndOf="@id/Likes"
         app:layout_constraintTop_toBottomOf="@id/descriptionImage" />
-
-    <TextView
-        android:id="@+id/Count_Of_Views"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/little_spacing_for_attributes"
-        android:layout_marginTop="@dimen/margin_icons"
-        android:layout_marginEnd="@dimen/common_spacing"
-        android:text="@string/temp_views"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/descriptionImage" />
-
-    <ImageView
-        android:id="@+id/Views"
-        android:layout_width="@dimen/common_spacing_for_attributes"
-        android:layout_height="@dimen/common_spacing_for_attributes"
-        android:layout_marginTop="@dimen/margin_icons"
-        android:layout_marginEnd="@dimen/little_spacing_for_attributes"
-        android:contentDescription="@string/description_post_views"
-        app:layout_constraintEnd_toStartOf="@+id/Count_Of_Views"
-        app:layout_constraintTop_toBottomOf="@id/descriptionImage"
-        app:srcCompat="@drawable/ic_baseline_remove_red_eye_24" />
 
     <ImageButton
         android:id="@+id/video"

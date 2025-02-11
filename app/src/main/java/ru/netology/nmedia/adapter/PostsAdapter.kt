@@ -22,8 +22,12 @@ interface OnInteractionListener {
     fun onPostClick(post: Post)
 }
 
+interface PostRepositoryInteraction {
+    suspend fun savePost(post: Post)
+}
+
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener
+    private val onInteractionListener: OnInteractionListener,
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
 
     var list = emptyList<Post>()
@@ -57,6 +61,7 @@ class PostViewHolder(
             content.text = post.content
             published.text = post.published.toString()
 
+
             val avatarUrl = "http://10.0.2.2:9999/avatars/"
             val imageUrl = "http://10.0.2.2:9999/images/"
 
@@ -80,6 +85,7 @@ class PostViewHolder(
             Likes.isChecked = post.likedByMe
             Likes.text = post.likes.toString()
 
+
 //            Reposts.text = post.reposts.toString()
 
             Likes.setOnClickListener {
@@ -88,6 +94,12 @@ class PostViewHolder(
 
             Reposts.setOnClickListener {
                 onInteractionListener.onShare(post)
+            }
+
+            if (post.sent) {
+                binding.imageOfSent.visibility = View.GONE
+            } else {
+                binding.imageOfSent.visibility = View.VISIBLE
             }
 
             menu.setOnClickListener {

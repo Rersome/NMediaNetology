@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import android.net.NetworkCapabilities
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import ru.netology.nmedia.api.PostApi
@@ -27,6 +28,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             val posts = response.body() ?: throw ApiError(response.code(), response.message())
+            posts.let { it.forEach { post -> post.sent = true } }
             dao.insert(posts.toEntity())
         } catch (e: ApiError) {
             throw e
@@ -120,8 +122,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override suspend fun save(post: Post) {
-        dao.save(PostEntity.fromDto(post))
-
         try {
             val response = PostApi.service.save(post)
             if (!response.isSuccessful) {
@@ -129,6 +129,9 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             response.body() ?: throw ApiError(response.code(), response.message())
+
+            dao.insert(PostEntity.fromDto(post.copy(sent = true)))
+
         } catch (e: ApiError) {
             throw e
         } catch (_: Exception) {
