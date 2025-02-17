@@ -26,5 +26,6 @@
     <string name="newPost_notification">User %1$s posted a new post</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="retry">Retry</string>
+    <string name="new_posts">New Posts</string>
     <string name="there_s_no_posts">There\'s no posts</string>
 </resources>

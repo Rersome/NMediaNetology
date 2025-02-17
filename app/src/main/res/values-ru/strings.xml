@@ -22,4 +22,5 @@
     <string name="something_went_wrong">Что-то пошло не так</string>
     <string name="retry">Переподключаемся</string>
     <string name="there_s_no_posts">Посты отсутствуют</string>
+    <string name="new_posts">Свежие записи</string>
 </resources>

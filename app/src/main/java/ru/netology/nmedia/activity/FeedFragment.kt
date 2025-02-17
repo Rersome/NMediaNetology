@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
@@ -83,10 +84,17 @@ class FeedFragment : Fragment() {
             binding.empty.isVisible = state.empty
         }
 
+        viewModel.newerCount.observe(viewLifecycleOwner) { count ->
+            if (count > 0) {
+                binding.newPosts.visibility = View.VISIBLE
+            }
+        }
+
+
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             if (state.error != FeedError.NONE) {
                 Snackbar.make(binding.root, "Error: ${state.error}", Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry){
+                    .setAction(R.string.retry) {
                         viewModel.loadPosts()
                     }
                     .setAnchorView(binding.fab)
@@ -95,9 +103,26 @@ class FeedFragment : Fragment() {
             binding.progress.isVisible = state.loading
         }
 
+        binding.newPosts.setOnClickListener {
+            binding.newPosts.visibility = View.GONE
+            viewModel.showNewPosts()
+        }
+
+        viewModel.newerCount.observe(viewLifecycleOwner) {
+            println(it)
+        }
+
         binding.retry.setOnClickListener {
             viewModel.loadPosts()
         }
+
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        })
 
         binding.fab.setOnClickListener {
             viewModel.cancelEdit()

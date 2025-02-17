@@ -4,8 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
@@ -35,6 +38,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
 
+    val data: LiveData<FeedModel> = repository.data
+        .map(::FeedModel)
+        .asLiveData(Dispatchers.Default)
+
+    val newerCount: LiveData<Int> = data.switchMap {
+        val newerPostId = it.posts.firstOrNull()?.id ?: 0L
+
+        repository.getNewerCount(newerPostId).asLiveData()
+    }
+
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
@@ -43,7 +56,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    val data = repository.data.map { FeedModel(posts = it, empty = it.isEmpty()) }
     val edited = MutableLiveData(empty)
     private var isEditingCanceled = false
 
@@ -57,6 +69,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             _dataState.value = FeedModelState(loading = true)
             repository.getAll()
             _dataState.value = FeedModelState()
+        } catch (e: AppError) {
+            when (e) {
+                is ApiError -> _dataState.value = FeedModelState(FeedError.API)
+                is NetworkError -> _dataState.value = FeedModelState(FeedError.NETWORK)
+                is UnknownError -> _dataState.value = FeedModelState(FeedError.UNKNOWN)
+            }
+        }
+    }
+
+    fun showNewPosts() = viewModelScope.launch {
+        try {
+            repository.readAll()
         } catch (e: AppError) {
             when (e) {
                 is ApiError -> _dataState.value = FeedModelState(FeedError.API)

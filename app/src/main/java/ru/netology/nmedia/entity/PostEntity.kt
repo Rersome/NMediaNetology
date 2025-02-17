@@ -16,7 +16,7 @@ data class PostEntity(
     val likes: Long = 0,
     val reposts: Long = 0,
     val likedByMe: Boolean = false,
-    val sent: Boolean = false
+    val visible: Boolean = true
 )
 
 {
@@ -29,11 +29,10 @@ data class PostEntity(
         likes = likes,
         reposts = reposts,
         likedByMe = likedByMe,
-        sent = sent
     )
 
     companion object {
-        fun fromDto(post: Post) = PostEntity(
+        fun fromDto(post: Post, isVisible: Boolean = true) = PostEntity(
             id = post.id,
             author = post.author,
             authorAvatar = post.authorAvatar.toString(),
@@ -42,13 +41,13 @@ data class PostEntity(
             likes = post.likes,
             reposts = post.reposts,
             likedByMe = post.likedByMe,
-            sent = post.sent
+            visible = isVisible
         )
     }
 }
 
-fun List<Post>.toEntity() = map {
-    PostEntity.fromDto(it)
+fun List<Post>.toEntity(isVisible: Boolean = true) = map {
+    PostEntity.fromDto(it, isVisible)
 }
 
 fun List<PostEntity>.toDto() = map {

@@ -4,14 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
+import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.CalculateValues.calculateNumber
-
 import ru.netology.nmedia.dto.Post
 
 interface OnInteractionListener {
@@ -22,9 +23,6 @@ interface OnInteractionListener {
     fun onPostClick(post: Post)
 }
 
-interface PostRepositoryInteraction {
-    suspend fun savePost(post: Post)
-}
 
 class PostsAdapter(
     private val onInteractionListener: OnInteractionListener,
@@ -61,7 +59,6 @@ class PostViewHolder(
             content.text = post.content
             published.text = post.published.toString()
 
-
             val avatarUrl = "http://10.0.2.2:9999/avatars/"
             val imageUrl = "http://10.0.2.2:9999/images/"
 
@@ -94,12 +91,6 @@ class PostViewHolder(
 
             Reposts.setOnClickListener {
                 onInteractionListener.onShare(post)
-            }
-
-            if (post.sent) {
-                binding.imageOfSent.visibility = View.GONE
-            } else {
-                binding.imageOfSent.visibility = View.VISIBLE
             }
 
             menu.setOnClickListener {

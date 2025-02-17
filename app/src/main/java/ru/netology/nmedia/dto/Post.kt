@@ -10,7 +10,7 @@ data class Post(
     val likedByMe: Boolean = false,
     val authorAvatar: String? = null,
     val attachment: Attachment? = null,
-    var sent: Boolean = true
+    val visible: Boolean = true,
 )
 
 data class Attachment(
