@@ -23,4 +23,6 @@
     <string name="retry">Переподключаемся</string>
     <string name="there_s_no_posts">Посты отсутствуют</string>
     <string name="new_posts">Свежие записи</string>
+    <string name="save_post">Сохранить пост</string>
+    <string name="clear">Очистить</string>
 </resources>
