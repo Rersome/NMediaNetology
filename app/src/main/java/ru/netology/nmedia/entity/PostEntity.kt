@@ -1,9 +1,11 @@
 package ru.netology.nmedia.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.Post
+import kotlin.math.atan
 
 @Entity
 data class PostEntity(
@@ -16,7 +18,9 @@ data class PostEntity(
     val likes: Long = 0,
     val reposts: Long = 0,
     val likedByMe: Boolean = false,
-    val visible: Boolean = true
+    val visible: Boolean = true,
+    @Embedded
+    val attachment: Attachment? = null
 )
 
 {
@@ -29,6 +33,7 @@ data class PostEntity(
         likes = likes,
         reposts = reposts,
         likedByMe = likedByMe,
+        attachment = attachment
     )
 
     companion object {
@@ -41,7 +46,8 @@ data class PostEntity(
             likes = post.likes,
             reposts = post.reposts,
             likedByMe = post.likedByMe,
-            visible = isVisible
+            visible = isVisible,
+            attachment = post.attachment
         )
     }
 }

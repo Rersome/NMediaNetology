@@ -1,6 +1,7 @@
 package ru.netology.nmedia.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedError
+import ru.netology.nmedia.service.ACTION
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
@@ -104,6 +106,13 @@ class FeedFragment : Fragment() {
         }
 
         binding.newPosts.setOnClickListener {
+            adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    if (positionStart == 0) {
+                        binding.list.smoothScrollToPosition(0)
+                    }
+                }
+            })
             binding.newPosts.visibility = View.GONE
             viewModel.showNewPosts()
         }
@@ -115,14 +124,6 @@ class FeedFragment : Fragment() {
         binding.retry.setOnClickListener {
             viewModel.loadPosts()
         }
-
-        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                if (positionStart == 0) {
-                    binding.list.smoothScrollToPosition(0)
-                }
-            }
-        })
 
         binding.fab.setOnClickListener {
             viewModel.cancelEdit()

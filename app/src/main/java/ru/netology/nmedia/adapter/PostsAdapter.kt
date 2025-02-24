@@ -1,16 +1,16 @@
 package ru.netology.nmedia.adapter
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.asLiveData
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
-import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.CalculateValues.calculateNumber
 import ru.netology.nmedia.dto.Post
@@ -60,7 +60,7 @@ class PostViewHolder(
             published.text = post.published.toString()
 
             val avatarUrl = "http://10.0.2.2:9999/avatars/"
-            val imageUrl = "http://10.0.2.2:9999/images/"
+            val imageUrl = "http://10.0.2.2:9999/media/"
 
             Glide.with(itemView.context)
                 .load(avatarUrl + post.authorAvatar)
@@ -79,11 +79,15 @@ class PostViewHolder(
                 binding.descriptionImage.visibility = View.GONE
             }
 
+            binding.descriptionImage.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putString("IMAGE_URL", imageUrl + post.attachment?.url)
+                }
+                binding.root.findNavController().navigate(R.id.action_feedFragment_to_imagePreviewFragment, bundle)
+            }
+
             Likes.isChecked = post.likedByMe
             Likes.text = post.likes.toString()
-
-
-//            Reposts.text = post.reposts.toString()
 
             Likes.setOnClickListener {
                 onInteractionListener.onLike(post)

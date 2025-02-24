@@ -15,6 +15,5 @@ data class Post(
 
 data class Attachment(
     val url: String,
-    val description: String,
-    val type: String
+    val type: AttachmentType
 )

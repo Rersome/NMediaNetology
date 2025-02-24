@@ -28,4 +28,7 @@
     <string name="retry">Retry</string>
     <string name="new_posts">New Posts</string>
     <string name="there_s_no_posts">There\'s no posts</string>
+    <string name="save_post">Сохранить</string>
+    <string name="clear">Clear</string>
+    <string name="image_picker_error">image_picker_error\n</string>
 </resources>

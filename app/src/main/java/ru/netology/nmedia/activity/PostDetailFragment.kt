@@ -40,7 +40,7 @@ class PostDetailFragment : Fragment() {
                 binding.cardPost.Likes.isChecked = post.likedByMe
 
                 val avatarUrl = "http://10.0.2.2:9999/avatars/"
-                val imageUrl = "http://10.0.2.2:9999/images/"
+                val imageUrl = "http://10.0.2.2:9999/media/"
 
                 Glide.with(this@PostDetailFragment)
                     .load(avatarUrl + post.authorAvatar)

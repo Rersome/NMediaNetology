@@ -6,37 +6,74 @@
     android:layout_height="match_parent"
     tools:context=".activity.NewPostFragment">
 
-    <EditText
-        android:id="@+id/edit"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:gravity="start|top"
-        android:inputType="textMultiLine" />
+        android:layout_height="wrap_content">
 
-    <com.google.android.material.bottomappbar.BottomAppBar
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="?actionBarSize">
+
+            <EditText
+                android:id="@+id/edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:text="@tools:sample/lorem[300]" />
+
+            <FrameLayout
+                android:id="@+id/previewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    tools:src="@tools:sample/avatars" />
+
+                <Button
+                    android:id="@+id/clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:text="@string/clear" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
         android:id="@+id/bottomAppBar"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_height="?actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="?colorPrimary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/description_post_save"
-        app:layout_anchor="@id/bottomAppBar"
-        app:srcCompat="@drawable/ic_ok_24dp" />
+        <ImageView
+            android:id="@+id/pick_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingHorizontal="@dimen/common_spacing"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_baseline_image_24"
+            app:tint="?colorOnPrimary" />
 
-    <!--    <ImageView-->
-    <!--        android:id="@+id/image_of_cancel"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:contentDescription="@string/description_image_cancel"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:srcCompat="@drawable/ic_baseline_cancel_24"-->
-    <!--        tools:ignore="MissingConstraints" />-->
+        <ImageView
+            android:id="@+id/take_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_baseline_add_a_photo_24"
+            app:tint="?colorOnPrimary" />
+
+    </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

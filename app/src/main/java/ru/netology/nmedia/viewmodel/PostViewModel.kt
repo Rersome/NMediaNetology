@@ -19,6 +19,7 @@ import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.FeedError
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
+import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
@@ -59,6 +60,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val edited = MutableLiveData(empty)
     private var isEditingCanceled = false
 
+    private val _photo = MutableLiveData<PhotoModel?>(null)
+    val photo: LiveData<PhotoModel?> = _photo
+
 
     init {
         loadPosts()
@@ -98,7 +102,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             edited.value?.let {
                 val text = newText.trim()
                 if (text.isNotEmpty() && text != it.content) {
-                    repository.save(it.copy(content = text))
+                    _photo.value?.let { postWithAttachment ->
+                        repository.saveWithAttachment(it.copy(content = text), postWithAttachment)
+                    } ?: repository.save(it.copy(content = text))
                     _postCreated.postValue(Unit)
                 }
             }
@@ -167,5 +173,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 is UnknownError -> _dataState.value = FeedModelState(FeedError.UNKNOWN)
             }
         }
+    }
+
+    fun savePhoto(photoModel: PhotoModel?) {
+        _photo.value = photoModel
     }
 }
