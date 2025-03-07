@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.model.PhotoModel
@@ -72,15 +74,14 @@ class NewPostFragment : Fragment() {
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.image_picker_error),
-                    Toast.LENGTH_LONG)
+                    Toast.LENGTH_LONG
+                )
                     .show()
                 return@registerForActivityResult
             }
             val uri = it.data?.data ?: return@registerForActivityResult
             viewModel.savePhoto(PhotoModel(uri, uri.toFile()))
         }
-
-
 
         binding.pickPhoto.setOnClickListener {
             ImagePicker.Builder(this)

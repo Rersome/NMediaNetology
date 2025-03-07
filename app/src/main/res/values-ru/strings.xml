@@ -25,4 +25,11 @@
     <string name="new_posts">Свежие записи</string>
     <string name="save_post">Сохранить пост</string>
     <string name="clear">Очистить</string>
+    <string name="logout">Выйти</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_in">Войти</string>
+    <string name="pass">Пароль</string>
+    <string name="login">Логин</string>
+    <string name="name">Имя</string>
+    <string name="confirm_pass">Подтверждение пароля</string>
 </resources>

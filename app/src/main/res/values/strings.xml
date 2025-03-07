@@ -31,4 +31,11 @@
     <string name="save_post">Сохранить</string>
     <string name="clear">Clear</string>
     <string name="image_picker_error" translatable="false">image_picker_error\n</string>
+    <string name="logout">Logout</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="pass">Password</string>
+    <string name="login">Login</string>
+    <string name="name">Name</string>
+    <string name="confirm_pass">Confirm pass</string>
 </resources>

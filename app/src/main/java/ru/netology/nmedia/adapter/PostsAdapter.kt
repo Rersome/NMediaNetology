@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nmedia.R
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.CalculateValues.calculateNumber
 import ru.netology.nmedia.dto.Post
@@ -21,6 +24,7 @@ interface OnInteractionListener {
     fun onRemove(post: Post)
     fun onEdit(post: Post)
     fun onPostClick(post: Post)
+    fun onImagePreview(post: Post)
 }
 
 
@@ -80,10 +84,11 @@ class PostViewHolder(
             }
 
             binding.descriptionImage.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putString("IMAGE_URL", imageUrl + post.attachment?.url)
-                }
-                binding.root.findNavController().navigate(R.id.action_feedFragment_to_imagePreviewFragment, bundle)
+                onInteractionListener.onImagePreview(post)
+            }
+
+            if (post.likedByMe) {
+                binding.Likes.isCheckable = true
             }
 
             Likes.isChecked = post.likedByMe
@@ -96,6 +101,8 @@ class PostViewHolder(
             Reposts.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
+
+            menu.isVisible = post.ownedByMe
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

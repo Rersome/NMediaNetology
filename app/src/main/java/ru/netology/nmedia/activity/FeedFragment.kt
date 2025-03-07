@@ -1,7 +1,6 @@
 package ru.netology.nmedia.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,16 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostDetailFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
+import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedError
-import ru.netology.nmedia.service.ACTION
 import ru.netology.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
@@ -30,6 +30,20 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        fun showLoginDialog() {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Вы не вошли в свой профиль")
+                .setMessage("Пожалуйста, зайдите в свой профиль")
+                .setPositiveButton("OK") { _, _ ->
+                    findNavController().navigate(R.id.action_feedFragment_to_signInFragment)
+                }
+                .setNegativeButton("Отмена") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
@@ -37,7 +51,11 @@ class FeedFragment : Fragment() {
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                if (AppAuth.getInstance().authState.value?.token == null) {
+                    showLoginDialog()
+                } else {
+                    viewModel.likeById(post.id)
+                }
             }
 
             override fun onShare(post: Post) {
@@ -58,6 +76,17 @@ class FeedFragment : Fragment() {
                     Bundle().apply {
                         idArg = post.id
                     }
+                )
+            }
+
+            override fun onImagePreview(post: Post) {
+                val imageUrl = "http://10.0.2.2:9999/media/"
+                val bundle = Bundle().apply {
+                    putString("IMAGE_URL", imageUrl + post.attachment?.url)
+                }
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_imagePreviewFragment,
+                    bundle
                 )
             }
 
@@ -117,17 +146,17 @@ class FeedFragment : Fragment() {
             viewModel.showNewPosts()
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) {
-            println(it)
-        }
-
         binding.retry.setOnClickListener {
             viewModel.loadPosts()
         }
 
         binding.fab.setOnClickListener {
-            viewModel.cancelEdit()
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            if (AppAuth.getInstance().authState.value?.token == null) {
+                showLoginDialog()
+            } else {
+                viewModel.cancelEdit()
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            }
         }
         return binding.root
     }
