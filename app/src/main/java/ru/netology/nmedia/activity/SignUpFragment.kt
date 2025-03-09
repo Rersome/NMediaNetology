@@ -100,9 +100,9 @@ class SignUpFragment : Fragment() {
                         viewModel.registerUserWithPhoto(name, login, pass, it
                         )
                     }
+                } else {
+                    viewModel.registerUser(name, login, pass)
                 }
-                viewModel.registerUser(name, login, pass)
-                findNavController().navigate(R.id.feedFragment)
             }
             viewModel.savePhoto(null)
         }
