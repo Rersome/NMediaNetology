@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.netology.nmedia.api.PostApi
+import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
@@ -22,7 +22,7 @@ class AuthViewModel : ViewModel() {
 
     fun authenticateUser(login: String, pass: String) = viewModelScope.launch {
         try {
-            val response = PostApi.service.updateUser(login, pass)
+            val response = Api.service.updateUser(login, pass)
 
             if (response.isSuccessful) {
                 response.body()?.let { token ->

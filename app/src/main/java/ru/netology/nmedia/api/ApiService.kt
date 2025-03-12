@@ -22,6 +22,7 @@ import retrofit2.http.Path
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PushToken
 import ru.netology.nmedia.dto.Token
 import java.util.concurrent.TimeUnit
 
@@ -105,9 +106,12 @@ interface PostApiService {
         @Field("pass") pass: String,
         @Field("name") name: String
     ): Response<Token>
+
+    @POST("users/push-tokens")
+    suspend fun savePushToken(@Body pushToken: PushToken): Response<Unit>
 }
 
-object PostApi {
+object Api {
     val service: PostApiService by lazy {
         retrofit.create()
     }

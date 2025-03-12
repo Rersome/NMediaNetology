@@ -2,10 +2,17 @@ package ru.netology.nmedia.auth
 
 import android.content.Context
 import androidx.core.content.edit
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.dto.PushToken
 import ru.netology.nmedia.dto.Token
+import kotlin.coroutines.EmptyCoroutineContext
 
 class AppAuth private constructor(context: Context) {
 
@@ -22,6 +29,7 @@ class AppAuth private constructor(context: Context) {
         } else {
             _authState.value = Token(id = id, token = token)
         }
+        sendPushToken()
     }
 
     @Synchronized
@@ -31,12 +39,26 @@ class AppAuth private constructor(context: Context) {
             putString(TOKEN_KEY, token.token)
         }
         _authState.value = token
+        sendPushToken()
     }
 
     @Synchronized
     fun clear() {
         prefs.edit { clear() }
         _authState.value = null
+        sendPushToken()
+    }
+
+    fun sendPushToken(token: String? = null) {
+        CoroutineScope(EmptyCoroutineContext).launch {
+            try {
+                Api.service.savePushToken(
+                    PushToken(token ?: FirebaseMessaging.getInstance().token.await())
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     companion object {

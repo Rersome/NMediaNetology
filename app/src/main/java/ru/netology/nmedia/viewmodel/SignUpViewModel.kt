@@ -10,7 +10,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import ru.netology.nmedia.api.PostApi
+import ru.netology.nmedia.api.Api
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
@@ -28,7 +28,7 @@ class SignUpViewModel : ViewModel() {
 
     fun registerUser(name: String, login: String, pass: String) = viewModelScope.launch {
         try {
-            val response = PostApi.service.registerUser(login, pass, name)
+            val response = Api.service.registerUser(login, pass, name)
 
             if (response.isSuccessful) {
                 response.body()?.let { token ->
@@ -53,7 +53,7 @@ class SignUpViewModel : ViewModel() {
     fun registerUserWithPhoto(name: String, login: String, pass: String, photo: PhotoModel) =
         viewModelScope.launch {
             try {
-                val response = PostApi.service.registerWithPhoto(
+                val response = Api.service.registerWithPhoto(
                     login.toRequestBody("text/plain".toMediaType()),
                     pass.toRequestBody("text/plain".toMediaType()),
                     name.toRequestBody("text/plain".toMediaType()),
