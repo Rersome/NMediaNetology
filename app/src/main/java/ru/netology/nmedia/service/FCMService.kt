@@ -110,8 +110,10 @@ class FCMService : FirebaseMessagingService() {
 
     private fun pushMessage(pushMessage: PushMessage) {
         val recipientId = pushMessage.recipientId?.toString()
+        val currentUserId = AppAuth.getInstance().authState.value?.id?.toString()
+
         when {
-            recipientId == AppAuth.getInstance().authState.value?.id.toString() -> {
+            recipientId == currentUserId -> {
                 val notification = NotificationCompat.Builder(this, channelId)
                     .setSmallIcon(R.drawable.ic_notification_24dp)
                     .setContentTitle(
@@ -127,13 +129,33 @@ class FCMService : FirebaseMessagingService() {
                 val notificationManager =
                     getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(Random.nextInt(100_000), notification)
+
             }
 
-            recipientId == "0" || (recipientId != "0" && recipientId.toString() != AppAuth.getInstance().authState.value?.id.toString()) -> {
-                AppAuth.getInstance().sendPushToken()
+            recipientId == "0" -> {
+                if (currentUserId != null) {
+                    AppAuth.getInstance().sendPushToken()
+                } else {
+                    val notification = NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.ic_notification_24dp)
+                        .setContentTitle(
+                            getString(
+                                R.string.share_notification,
+                                recipientId,
+                                pushMessage.content
+                            )
+                        )
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .build()
+
+                    val notificationManager =
+                        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.notify(Random.nextInt(100_000), notification)
+                }
+
             }
 
-            else -> {
+            recipientId != "0" -> {
                 val notification = NotificationCompat.Builder(this, channelId)
                     .setSmallIcon(R.drawable.ic_notification_24dp)
                     .setContentTitle(
