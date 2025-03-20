@@ -13,13 +13,20 @@ import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.ActivityAppBinding
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var appAuth: AppAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
@@ -70,12 +77,14 @@ class AppActivity : AppCompatActivity() {
                             )
                             true
                         }
+
                         R.id.signUp -> {
                             findNavController(R.id.navHost).navigate(
                                 R.id.action_feedFragment_to_signUpFragment
                             )
                             true
                         }
+
                         R.id.logout -> {
                             if (findNavController(R.id.navHost).currentDestination?.id == R.id.newPostFragment) {
                                 MaterialAlertDialogBuilder(this@AppActivity)
@@ -83,7 +92,7 @@ class AppActivity : AppCompatActivity() {
                                     .setMessage("Вы уверены, что хотите выйти из профиля?")
                                     .setPositiveButton("OK") { _, _ ->
                                         findNavController(R.id.navHost).navigateUp()
-                                        AppAuth.getInstance().clear()
+                                        appAuth.clear()
                                     }
                                     .setNegativeButton("Отмена") { dialog, _ ->
                                         dialog.dismiss()
@@ -91,10 +100,11 @@ class AppActivity : AppCompatActivity() {
                                     .show()
                                 true
                             } else {
-                                AppAuth.getInstance().clear()
+                                appAuth.clear()
                                 true
                             }
                         }
+
                         else -> false
                     }
             }

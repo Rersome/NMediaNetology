@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import ru.netology.nmedia.api.Api
+import ru.netology.nmedia.api.ApiService
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.AttachmentType
@@ -22,9 +22,13 @@ import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.PhotoModel
 import java.io.IOException
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
-class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
+class PostRepositoryImpl @Inject constructor(
+    private val dao: PostDao,
+    private val apiService: ApiService
+) : PostRepository {
 
     override val data = dao.getAllVisible().map {
         it.toDto()
@@ -35,7 +39,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             try {
                 delay(10.seconds)
 
-                val response = Api.service.getNewer(newerId)
+                val response = apiService.getNewer(newerId)
 
                 val posts = response.body() ?: throw ApiError(response.code(), response.message())
                 dao.insert(posts.toEntity(isVisible = false))
@@ -55,7 +59,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override suspend fun getAll() {
         try {
-            val response = Api.service.getAll()
+            val response = apiService.getAll()
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -79,7 +83,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         dao.likeById(id)
 
         try {
-            val response = Api.service.likeById(id)
+            val response = apiService.likeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -101,7 +105,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         dao.unlikeById(id)
 
         try {
-            val response = Api.service.unlikeById(id)
+            val response = apiService.unlikeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -123,7 +127,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         dao.shareById(id)
 
         try {
-            val response = Api.service.shareById(id)
+            val response = apiService.shareById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -142,7 +146,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         dao.removeById(id)
 
         try {
-            val response = Api.service.removeById(id)
+            val response = apiService.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -159,7 +163,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override suspend fun save(post: Post) {
         try {
-            val response = Api.service.save(post)
+            val response = apiService.save(post)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -179,13 +183,14 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override suspend fun saveWithAttachment(post: Post, photoModel: PhotoModel) {
         val media = upload(photoModel)
 
-        val postWithAttachment = post.copy(attachment = Attachment(media.id, type = AttachmentType.IMAGE))
+        val postWithAttachment =
+            post.copy(attachment = Attachment(media.id, type = AttachmentType.IMAGE))
 
         save(postWithAttachment)
     }
 
     private suspend fun upload(photoModel: PhotoModel): Media =
-        Api.service.upload(
+        apiService.upload(
             MultipartBody.Part.createFormData(
                 "file",
                 photoModel.file.name,

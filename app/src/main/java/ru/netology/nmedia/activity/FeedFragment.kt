@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostDetailFragment.Companion.idArg
@@ -23,7 +24,10 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedError
 import ru.netology.nmedia.viewmodel.PostViewModel
 
-class FeedFragment : Fragment() {
+@AndroidEntryPoint
+class FeedFragment(
+    private val appAuth: AppAuth
+) : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +55,7 @@ class FeedFragment : Fragment() {
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onLike(post: Post) {
-                if (AppAuth.getInstance().authState.value?.token == null) {
+                if (appAuth.authState.value?.token == null) {
                     showLoginDialog()
                 } else {
                     viewModel.likeById(post.id)
@@ -151,7 +155,7 @@ class FeedFragment : Fragment() {
         }
 
         binding.fab.setOnClickListener {
-            if (AppAuth.getInstance().authState.value?.token == null) {
+            if (appAuth.authState.value?.token == null) {
                 showLoginDialog()
             } else {
                 viewModel.cancelEdit()

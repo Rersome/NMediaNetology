@@ -14,11 +14,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentSignupBinding
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.viewmodel.SignUpViewModel
 
+@AndroidEntryPoint
 class SignUpFragment : Fragment() {
     private lateinit var binding: FragmentSignupBinding
 
@@ -26,7 +28,7 @@ class SignUpFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSignupBinding.inflate(inflater, container, false)
         val viewModel: SignUpViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
@@ -39,19 +41,20 @@ class SignUpFragment : Fragment() {
             binding.previewReg.setImageURI(it.uri)
         }
 
-        val photoResultContract = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == ImagePicker.RESULT_ERROR) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.image_picker_error),
-                    Toast.LENGTH_LONG
-                )
-                    .show()
-                return@registerForActivityResult
+        val photoResultContract =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == ImagePicker.RESULT_ERROR) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.image_picker_error),
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                    return@registerForActivityResult
+                }
+                val uri = it.data?.data ?: return@registerForActivityResult
+                viewModel.savePhoto(PhotoModel(uri, uri.toFile()))
             }
-            val uri = it.data?.data ?: return@registerForActivityResult
-            viewModel.savePhoto(PhotoModel(uri, uri.toFile()))
-        }
 
         binding.pickPhotoReg.setOnClickListener {
             ImagePicker.Builder(this)
@@ -97,7 +100,8 @@ class SignUpFragment : Fragment() {
             } else {
                 if (binding.previewReg.isVisible) {
                     viewModel.photo.value?.let {
-                        viewModel.registerUserWithPhoto(name, login, pass, it
+                        viewModel.registerUserWithPhoto(
+                            name, login, pass, it
                         )
                     }
                 } else {

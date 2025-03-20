@@ -1,6 +1,5 @@
 package ru.netology.nmedia.service
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -10,11 +9,17 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.random.Random
 
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     private val content = "content"
     private val channelId = "Notifications"
@@ -46,71 +51,12 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Log.d("FCM token", token)
-        AppAuth.getInstance().sendPushToken(token)
+        appAuth.sendPushToken(token)
     }
-
-//    private fun handleLike(like: Like) {
-//        val notification = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.drawable.ic_notification_24dp)
-//            .setContentTitle(
-//                getString(
-//                    R.string.like_notification,
-//                    like.userName,
-//                    like.postAuthor
-//                )
-//            )
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .build()
-//
-//        val notificationManager =
-//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.notify(Random.nextInt(100_000), notification)
-//    }
-//
-//    private fun handleShare(share: Share) {
-//        val notification = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.drawable.ic_notification_24dp)
-//            .setContentTitle(
-//                getString(
-//                    R.string.share_notification,
-//                    share.userName,
-//                    share.postAuthor
-//                )
-//            )
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .build()
-//
-//        val notificationManager =
-//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.notify(Random.nextInt(100_000), notification)
-//    }
-//
-//    @SuppressLint("StringFormatMatches")
-//    private fun handleNewPost(newPost: NewPost) {
-//        val notification = NotificationCompat.Builder(this, channelId)
-//            .setSmallIcon(R.drawable.ic_notification_24dp)
-//            .setContentTitle(
-//                getString(
-//                    R.string.newPost_notification,
-//                    newPost.userName,
-//                    newPost.postAuthor
-//                )
-//            )
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .setStyle(
-//                NotificationCompat.BigTextStyle()
-//                    .bigText(newPost.postText)
-//            )
-//            .build()
-//
-//        val notificationManager =
-//            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.notify(Random.nextInt(100_000), notification)
-//    }
 
     private fun pushMessage(pushMessage: PushMessage) {
         val recipientId = pushMessage.recipientId?.toString()
-        val currentUserId = AppAuth.getInstance().authState.value?.id?.toString()
+        val currentUserId = appAuth.authState.value?.id?.toString()
 
         when {
             recipientId == currentUserId -> {
@@ -134,7 +80,7 @@ class FCMService : FirebaseMessagingService() {
 
             recipientId == "0" -> {
                 if (currentUserId != null) {
-                    AppAuth.getInstance().sendPushToken()
+                    appAuth.sendPushToken()
                 } else {
                     val notification = NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_notification_24dp)
@@ -175,35 +121,6 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 }
-
-//enum class ACTION {
-//    LIKE,
-//    SHARE,
-//    NEWPOST,
-//    PUSH
-//}
-
-//data class Like(
-//    val userId: Long,
-//    val userName: String,
-//    val postAuthor: String,
-//    val postId: Long
-//)
-//
-//data class Share(
-//    val userId: Long,
-//    val userName: String,
-//    val postAuthor: String,
-//    val postId: Long
-//)
-//
-//data class NewPost(
-//    val userId: Long,
-//    val userName: String,
-//    val postAuthor: String,
-//    val postId: Long,
-//    val postText: String
-//)
 
 data class PushMessage(
     val recipientId: Long?,
