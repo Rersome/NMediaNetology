@@ -21,7 +21,7 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 class PostDetailFragment : Fragment() {
     private lateinit var binding: DetailedFragmentCardPostBinding
 
-    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val viewModel by viewModels<PostViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

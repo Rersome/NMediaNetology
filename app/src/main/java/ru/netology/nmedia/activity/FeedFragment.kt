@@ -23,11 +23,13 @@ import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedError
 import ru.netology.nmedia.viewmodel.PostViewModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class FeedFragment(
-    private val appAuth: AppAuth
-) : Fragment() {
+class FeedFragment : Fragment() {
+
+    @Inject
+    lateinit var appAuth: AppAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +52,7 @@ class FeedFragment(
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel by viewModels<PostViewModel>()
 
         val adapter = PostsAdapter(object : OnInteractionListener {
 

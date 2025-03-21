@@ -30,7 +30,7 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignupBinding.inflate(inflater, container, false)
-        val viewModel: SignUpViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel by viewModels<SignUpViewModel>()
 
         viewModel.photo.observe(viewLifecycleOwner) {
             if (it == null) {

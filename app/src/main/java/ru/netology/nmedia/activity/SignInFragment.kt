@@ -21,10 +21,10 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSigninBinding.inflate(inflater, container, false)
 
-        val viewModel: AuthViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel by viewModels<AuthViewModel>()
 
         viewModel.authenticationState.observe(viewLifecycleOwner) { result ->
             result?.let {

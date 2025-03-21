@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/imagePreviewFragment"
-        android:name="ImagePreviewFragment"
+        android:name="ru.netology.nmedia.activity.ImagePreviewFragment"
         android:label="ImagePreviewFragment" />
     <fragment
         android:id="@+id/signInFragment"

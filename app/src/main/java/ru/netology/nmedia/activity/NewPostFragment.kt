@@ -36,7 +36,7 @@ class NewPostFragment : Fragment() {
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
         arguments?.textArg?.let(binding.edit::setText)
 
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+        val viewModel by viewModels<PostViewModel>()
 
         requireActivity().addMenuProvider(
             object : MenuProvider {
