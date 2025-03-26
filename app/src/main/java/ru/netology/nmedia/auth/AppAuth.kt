@@ -24,7 +24,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 @Singleton
 class AppAuth @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val context: Context,
+    private val firebaseMessaging: FirebaseMessaging
 ) {
 
     private val TOKEN_KEY = "TOKEN_KEY"
@@ -74,7 +75,7 @@ class AppAuth @Inject constructor(
                 val entryPoint =
                     EntryPointAccessors.fromApplication(context, AppAuthEntryPoint::class.java)
                 entryPoint.getApiService().savePushToken(
-                    PushToken(token ?: FirebaseMessaging.getInstance().token.await())
+                    PushToken(token ?: firebaseMessaging.token.await())
                 )
             } catch (e: Exception) {
                 e.printStackTrace()

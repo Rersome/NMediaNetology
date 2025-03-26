@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace 'ru.netology.nmedia'
@@ -56,6 +57,7 @@ dependencies {
     def coroutine_version = "1.9.0"
     def lifecycle_version = "2.2.0"
     def imagepicker_version = "2.1"
+    def play_services_base = "18.6.0"
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.activity.ktx.v192
@@ -82,6 +84,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "com.google.android.gms:play-services-base:$play_services_base"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
