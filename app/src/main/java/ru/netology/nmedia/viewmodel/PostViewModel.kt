@@ -1,14 +1,20 @@
 package ru.netology.nmedia.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.filter
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
@@ -18,7 +24,6 @@ import ru.netology.nmedia.error.AppError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import ru.netology.nmedia.model.FeedError
-import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
 import ru.netology.nmedia.model.PhotoModel
 import ru.netology.nmedia.repository.PostRepository
@@ -42,22 +47,23 @@ class PostViewModel @Inject constructor(
     appAuth: AppAuth
 ) : ViewModel() {
 
-    val data: LiveData<FeedModel> =
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val data: Flow<PagingData<Post>> =
         appAuth.authState.flatMapLatest { token ->
             repository.data
                 .map {
-                    FeedModel(it.map { post ->
+                    it.map { post ->
                         post.copy(ownedByMe = post.authorId == token?.id)
-                    }, it.isEmpty())
+                    }
                 }
         }
-            .asLiveData(Dispatchers.Default)
+            .flowOn(Dispatchers.Default)
 
-    val newerCount: LiveData<Int> = data.switchMap {
-        val newerPostId = it.posts.firstOrNull()?.id ?: 0L
-
-        repository.getNewerCount(newerPostId).asLiveData()
-    }
+//    val newerCount: LiveData<Int> = data.switchMap {
+//        val newerPostId = it.posts.firstOrNull()?.id ?: 0L
+//
+//        repository.getNewerCount(newerPostId).asLiveData()
+//    }
 
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
@@ -139,18 +145,7 @@ class PostViewModel @Inject constructor(
 
     fun likeById(id: Long) = viewModelScope.launch {
         try {
-            val post = data.value?.posts?.find { it.id == id }
-            post?.let {
-                it.copy(
-                    likedByMe = !it.likedByMe,
-                    likes = it.likes + if (it.likedByMe) -1 else 1
-                )
-                if (it.likedByMe) {
-                    repository.unlikeById(id)
-                } else {
-                    repository.likeById(id)
-                }
-            }
+            repository.likeById(id)
         } catch (e: AppError) {
             when (e) {
                 is ApiError -> _dataState.value = FeedModelState(FeedError.API)
@@ -171,10 +166,12 @@ class PostViewModel @Inject constructor(
 
     fun removeById(id: Long) = viewModelScope.launch {
         try {
-            val post =
-                data.value?.posts?.find { it.id == id } ?: throw RuntimeException("Post not found")
-            post.let {
-                repository.removeById(id)
+            data.collectLatest { pagingData: PagingData<Post> ->
+                pagingData.filter { it.id == id }.map {
+                    it.let {
+                        repository.removeById(id)
+                    }
+                }
             }
         } catch (e: AppError) {
             when (e) {

@@ -8,11 +8,17 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostDetailFragment.Companion.idArg
@@ -112,20 +118,31 @@ class FeedFragment : Fragment() {
 
         })
         binding.list.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.swipeRefresh.setOnRefreshListener {
-                viewModel.loadPosts()
-                binding.swipeRefresh.isRefreshing = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.data.collectLatest(adapter::submitData)
             }
-            binding.empty.isVisible = state.empty
         }
 
-        viewModel.newerCount.observe(viewLifecycleOwner) { count ->
-            if (count > 0) {
-                binding.newPosts.visibility = View.VISIBLE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.swipeRefresh.isRefreshing
+                        state.refresh is LoadState.Loading ||
+                                state.prepend is LoadState.Loading ||
+                                state.append is LoadState.Loading
+                }
             }
         }
+
+        binding.swipeRefresh.setOnRefreshListener(adapter::refresh)
+
+//        viewModel.newerCount.observe(viewLifecycleOwner) { count ->
+//            if (count > 0) {
+//                binding.newPosts.visibility = View.VISIBLE
+//            }
+//        }
 
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
