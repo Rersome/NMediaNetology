@@ -10,7 +10,6 @@ object CalculateValues {
                 val firstDigit = number / 1000
                 val secondDigit = (number % 1000) / 100
                 "$firstDigit.$secondDigit" + "K"
-                //String.format("%.1fK", round(number / 1_000.0))
             }
 
             else -> number.toString()

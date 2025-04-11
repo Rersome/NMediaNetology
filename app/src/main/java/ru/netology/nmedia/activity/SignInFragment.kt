@@ -15,17 +15,28 @@ import ru.netology.nmedia.viewmodel.AuthViewModel
 
 @AndroidEntryPoint
 class SignInFragment : Fragment() {
-    private lateinit var binding: FragmentSigninBinding
+    private var _binding: FragmentSigninBinding? = null
+    private val binding get() = _binding!!
+
+    val viewModel by viewModels<AuthViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSigninBinding.inflate(inflater, container, false)
+        _binding = FragmentSigninBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val viewModel by viewModels<AuthViewModel>()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        setupObservers()
+        setupListeners()
+    }
+
+    private fun setupObservers() {
         viewModel.authenticationState.observe(viewLifecycleOwner) { result ->
             result?.let {
                 if (it.isSuccess) {
@@ -37,7 +48,9 @@ class SignInFragment : Fragment() {
                 viewModel.authenticationState.value = null
             }
         }
+    }
 
+    private fun setupListeners() {
         binding.buttonLogin.setOnClickListener {
             val login = binding.editTextLogin.text.toString()
             val pass = binding.editTextPassword.text.toString()
@@ -48,7 +61,5 @@ class SignInFragment : Fragment() {
         binding.buttonReg.setOnClickListener {
             findNavController().navigate(R.id.action_signInFragment_to_signUpFragment)
         }
-
-        return binding.root
     }
 }

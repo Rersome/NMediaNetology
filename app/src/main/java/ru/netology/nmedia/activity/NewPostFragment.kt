@@ -1,5 +1,6 @@
 package ru.netology.nmedia.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
@@ -28,16 +30,31 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 @AndroidEntryPoint
 class NewPostFragment : Fragment() {
 
+    private var _binding: FragmentNewPostBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: PostViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentNewPostBinding.inflate(inflater, container, false)
+        _binding = FragmentNewPostBinding.inflate(inflater, container, false)
         arguments?.textArg?.let(binding.edit::setText)
 
-        val viewModel by viewModels<PostViewModel>()
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        choiceOfText()
+        photoObserver()
+        setupListeners()
+    }
+
+    private fun choiceOfText() {
         requireActivity().addMenuProvider(
             object : MenuProvider {
                 override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -55,9 +72,10 @@ class NewPostFragment : Fragment() {
                     } else {
                         false
                     }
-            }, viewLifecycleOwner
-        )
+            }, viewLifecycleOwner)
+    }
 
+    private fun photoObserver() {
         viewModel.photo.observe(viewLifecycleOwner) {
             if (it == null) {
                 binding.previewContainer.isGone = true
@@ -67,6 +85,13 @@ class NewPostFragment : Fragment() {
             binding.preview.setImageURI(it.uri)
         }
 
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun returnContract(): ActivityResultLauncher<Intent> {
         val photoResultContract =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == ImagePicker.RESULT_ERROR) {
@@ -81,6 +106,11 @@ class NewPostFragment : Fragment() {
                 val uri = it.data?.data ?: return@registerForActivityResult
                 viewModel.savePhoto(PhotoModel(uri, uri.toFile()))
             }
+        return photoResultContract
+    }
+
+    private fun setupListeners() {
+        val photoResultContract = returnContract()
 
         binding.pickPhoto.setOnClickListener {
             ImagePicker.Builder(this)
@@ -105,15 +135,7 @@ class NewPostFragment : Fragment() {
         binding.clear.setOnClickListener {
             viewModel.savePhoto(null)
         }
-
-        viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
-            findNavController().navigateUp()
-        }
-
-        return binding.root
     }
-
     companion object {
         var Bundle.textArg by StringArg
     }

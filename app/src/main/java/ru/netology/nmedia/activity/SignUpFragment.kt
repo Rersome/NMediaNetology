@@ -1,10 +1,12 @@
 package ru.netology.nmedia.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.isGone
@@ -22,16 +24,29 @@ import ru.netology.nmedia.viewmodel.SignUpViewModel
 
 @AndroidEntryPoint
 class SignUpFragment : Fragment() {
-    private lateinit var binding: FragmentSignupBinding
+
+    val viewModel by viewModels<SignUpViewModel>()
+
+    private var _binding: FragmentSignupBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSignupBinding.inflate(inflater, container, false)
-        val viewModel by viewModels<SignUpViewModel>()
+        _binding = FragmentSignupBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupObservers()
+        setupListeners()
+    }
+
+    private fun setupObservers() {
         viewModel.photo.observe(viewLifecycleOwner) {
             if (it == null) {
                 binding.previewReg.isGone = true
@@ -41,6 +56,20 @@ class SignUpFragment : Fragment() {
             binding.previewReg.setImageURI(it.uri)
         }
 
+        viewModel.signUpState.observe(viewLifecycleOwner) { result ->
+            result?.let {
+                if (it.isSuccess) {
+                    findNavController().navigate(R.id.feedFragment)
+                } else {
+                    val message = it.exceptionOrNull()?.message ?: "Пароли не совпадают"
+                    Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+                }
+                viewModel.signUpState.value = null
+            }
+        }
+    }
+
+    private fun returnContract(): ActivityResultLauncher<Intent> {
         val photoResultContract =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == ImagePicker.RESULT_ERROR) {
@@ -55,6 +84,11 @@ class SignUpFragment : Fragment() {
                 val uri = it.data?.data ?: return@registerForActivityResult
                 viewModel.savePhoto(PhotoModel(uri, uri.toFile()))
             }
+        return photoResultContract
+    }
+
+    private fun setupListeners() {
+        val photoResultContract = returnContract()
 
         binding.pickPhotoReg.setOnClickListener {
             ImagePicker.Builder(this)
@@ -74,18 +108,6 @@ class SignUpFragment : Fragment() {
                 .createIntent {
                     photoResultContract.launch(it)
                 }
-        }
-
-        viewModel.signUpState.observe(viewLifecycleOwner) { result ->
-            result?.let {
-                if (it.isSuccess) {
-                    findNavController().navigate(R.id.feedFragment)
-                } else {
-                    val message = it.exceptionOrNull()?.message ?: "Пароли не совпадают"
-                    Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
-                }
-                viewModel.signUpState.value = null
-            }
         }
 
         binding.buttonRegister.setOnClickListener {
@@ -110,6 +132,5 @@ class SignUpFragment : Fragment() {
             }
             viewModel.savePhoto(null)
         }
-        return binding.root
     }
 }
