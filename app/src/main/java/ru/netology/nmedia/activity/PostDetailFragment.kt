@@ -28,17 +28,30 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 
 @AndroidEntryPoint
 class PostDetailFragment : Fragment() {
-    private lateinit var binding: DetailedFragmentCardPostBinding
+    private val avatarUrl = "http://10.0.2.2:9999/avatars/"
+    private val imageUrl = "http://10.0.2.2:9999/media/"
 
-    private val viewModel by viewModels<PostViewModel>()
+    private var _binding: DetailedFragmentCardPostBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: PostViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DetailedFragmentCardPostBinding.inflate(inflater, container, false)
+        _binding = DetailedFragmentCardPostBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        showUI()
+    }
+
+    private fun showUI() {
         val postId = arguments?.idArg ?: -1
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -52,9 +65,6 @@ class PostDetailFragment : Fragment() {
                             binding.cardPost.Likes.text = post.likes.toString()
                             binding.cardPost.Reposts.text = post.reposts.toString()
                             binding.cardPost.Likes.isChecked = post.likedByMe
-
-                            val avatarUrl = "http://10.0.2.2:9999/avatars/"
-                            val imageUrl = "http://10.0.2.2:9999/media/"
 
                             Glide.with(this@PostDetailFragment)
                                 .load(avatarUrl + post.authorAvatar)
@@ -123,8 +133,6 @@ class PostDetailFragment : Fragment() {
                 }
             }
         }
-
-        return binding.root
     }
 
     companion object {

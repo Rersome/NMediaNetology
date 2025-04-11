@@ -18,7 +18,7 @@ class SignInFragment : Fragment() {
     private var _binding: FragmentSigninBinding? = null
     private val binding get() = _binding!!
 
-    val viewModel by viewModels<AuthViewModel>()
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

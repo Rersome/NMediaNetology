@@ -58,7 +58,7 @@ class FeedFragment : Fragment() {
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
-        val viewModel by viewModels<PostViewModel>()
+        val viewModel: PostViewModel by viewModels()
 
         val adapter = PostsAdapter(object : OnInteractionListener {
 

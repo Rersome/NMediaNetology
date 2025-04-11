@@ -30,13 +30,15 @@ import javax.inject.Inject
 class AppActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var appAuth: AppAuth
+    private lateinit var appAuth: AppAuth
 
     @Inject
-    lateinit var firebaseMessaging: FirebaseMessaging
+    private lateinit var firebaseMessaging: FirebaseMessaging
 
     @Inject
-    lateinit var googleApiAvailability: GoogleApiAvailability
+    private lateinit var googleApiAvailability: GoogleApiAvailability
+
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,8 +95,6 @@ class AppActivity : AppCompatActivity() {
             )
                 .show()
         }
-
-        val viewModel by viewModels<AuthViewModel>()
 
 
         addMenuProvider(
