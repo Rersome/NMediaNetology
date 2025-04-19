@@ -30,13 +30,13 @@ import javax.inject.Inject
 class AppActivity : AppCompatActivity() {
 
     @Inject
-    private lateinit var appAuth: AppAuth
+    lateinit var appAuth: AppAuth
 
     @Inject
-    private lateinit var firebaseMessaging: FirebaseMessaging
+    lateinit var firebaseMessaging: FirebaseMessaging
 
     @Inject
-    private lateinit var googleApiAvailability: GoogleApiAvailability
+    lateinit var googleApiAvailability: GoogleApiAvailability
 
     private val viewModel: AuthViewModel by viewModels()
 

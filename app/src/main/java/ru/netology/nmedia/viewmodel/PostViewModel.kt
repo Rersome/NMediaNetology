@@ -166,13 +166,7 @@ class PostViewModel @Inject constructor(
 
     fun removeById(id: Long) = viewModelScope.launch {
         try {
-            data.collectLatest { pagingData: PagingData<Post> ->
-                pagingData.filter { it.id == id }.map {
-                    it.let {
-                        repository.removeById(id)
-                    }
-                }
-            }
+            repository.removeById(id)
         } catch (e: AppError) {
             when (e) {
                 is ApiError -> _dataState.value = FeedModelState(FeedError.API)

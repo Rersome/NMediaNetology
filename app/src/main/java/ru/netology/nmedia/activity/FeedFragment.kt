@@ -128,16 +128,15 @@ class FeedFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 adapter.loadStateFlow.collectLatest { state ->
-                    binding.swipeRefresh.isRefreshing
-                    state.refresh is LoadState.Loading ||
-                            state.prepend is LoadState.Loading ||
-                            state.append is LoadState.Loading
+                    binding.swipeRefresh.isRefreshing =
+                        state.refresh is LoadState.Loading ||
+                                state.prepend is LoadState.Loading ||
+                                state.append is LoadState.Loading
                 }
             }
         }
 
         binding.swipeRefresh.setOnRefreshListener(adapter::refresh)
-
 //        viewModel.newerCount.observe(viewLifecycleOwner) { count ->
 //            if (count > 0) {
 //                binding.newPosts.visibility = View.VISIBLE
