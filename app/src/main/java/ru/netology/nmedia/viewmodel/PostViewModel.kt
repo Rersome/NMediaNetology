@@ -1,23 +1,21 @@
 package ru.netology.nmedia.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.filter
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.AppError
@@ -48,12 +46,16 @@ class PostViewModel @Inject constructor(
 ) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val data: Flow<PagingData<Post>> =
+    val data: Flow<PagingData<FeedItem>> =
         appAuth.authState.flatMapLatest { token ->
             repository.data
                 .map {
                     it.map { post ->
-                        post.copy(ownedByMe = post.authorId == token?.id)
+                        if (post is Post) {
+                            post.copy(ownedByMe = post.authorId == token?.id)
+                        } else {
+                            post
+                        }
                     }
                 }
         }
@@ -79,10 +81,6 @@ class PostViewModel @Inject constructor(
     private val _photo = MutableLiveData<PhotoModel?>(null)
     val photo: LiveData<PhotoModel?> = _photo
 
-
-    init {
-        loadPosts()
-    }
 
     fun loadPosts() = viewModelScope.launch {
         try {

@@ -23,6 +23,7 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.activity.PostDetailFragment.Companion.idArg
 import ru.netology.nmedia.adapter.OnInteractionListener
+import ru.netology.nmedia.adapter.PostLoadingStateAdapter
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -117,7 +118,11 @@ class FeedFragment : Fragment() {
             }
 
         })
-        binding.list.adapter = adapter
+
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = PostLoadingStateAdapter { adapter.retry() },
+            footer = PostLoadingStateAdapter { adapter.retry() }
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -137,12 +142,6 @@ class FeedFragment : Fragment() {
         }
 
         binding.swipeRefresh.setOnRefreshListener(adapter::refresh)
-//        viewModel.newerCount.observe(viewLifecycleOwner) { count ->
-//            if (count > 0) {
-//                binding.newPosts.visibility = View.VISIBLE
-//            }
-//        }
-
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             if (state.error != FeedError.NONE) {

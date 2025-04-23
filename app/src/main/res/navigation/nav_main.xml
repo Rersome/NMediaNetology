@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="ru.netology.nmedia.activity.SignInFragment"
-        android:label="SignInFragment" >
+        android:label="SignInFragment">
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />

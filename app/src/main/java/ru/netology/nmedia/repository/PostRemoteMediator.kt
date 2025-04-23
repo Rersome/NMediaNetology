@@ -98,9 +98,7 @@ class PostRemoteMediator(
                         }
                     }
 
-                    LoadType.PREPEND -> {
-
-                    }
+                    LoadType.PREPEND -> Unit
                 }
 
                 postDao.insert(body.map(PostEntity::fromDto))

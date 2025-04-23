@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.DetailedFragmentCardPostBinding
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.util.LongArg
 import ru.netology.nmedia.viewmodel.PostViewModel
@@ -55,9 +56,8 @@ class PostDetailFragment : Fragment() {
         val postId = arguments?.idArg ?: -1
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.data.collectLatest { pagingData: PagingData<Post> ->
-                    pagingData.filter { it.id == postId }.map { post ->
-
+                viewModel.data.collectLatest { pagingData: PagingData<FeedItem> ->
+                    pagingData.map { it as Post }.map { it }.filter { it.id == postId }.map { post ->
                         with(binding) {
                             binding.cardPost.author.text = post.author
                             binding.cardPost.content.text = post.content
@@ -97,7 +97,10 @@ class PostDetailFragment : Fragment() {
                                     type = "text/plain"
                                 }
                                 val shareIntent =
-                                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                                    Intent.createChooser(
+                                        intent,
+                                        getString(R.string.chooser_share_post)
+                                    )
                                 startActivity(shareIntent)
                                 viewModel.shareById(postId)
                             }
@@ -129,7 +132,7 @@ class PostDetailFragment : Fragment() {
                                 }.show()
                             }
                         }
-                    }
+                        }
                 }
             }
         }
