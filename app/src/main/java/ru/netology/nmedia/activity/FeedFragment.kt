@@ -119,9 +119,10 @@ class FeedFragment : Fragment() {
 
         })
 
-        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
-            header = PostLoadingStateAdapter { adapter.retry() },
-            footer = PostLoadingStateAdapter { adapter.retry() }
+        val footerAdapter = PostLoadingStateAdapter { adapter.retry() }
+
+        binding.list.adapter = adapter.withLoadStateFooter(
+            footer = footerAdapter
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -132,11 +133,13 @@ class FeedFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.loadStateFlow.collectLatest { state ->
-                    binding.swipeRefresh.isRefreshing =
-                        state.refresh is LoadState.Loading ||
-                                state.prepend is LoadState.Loading ||
-                                state.append is LoadState.Loading
+                adapter.loadStateFlow.collect { loadState ->
+                    binding.swipeRefresh.isRefreshing = loadState.refresh is LoadState.Loading
+
+                    adapter.setLoadStates(
+                        prepend = loadState.prepend,
+                        append = loadState.append
+                    )
                 }
             }
         }

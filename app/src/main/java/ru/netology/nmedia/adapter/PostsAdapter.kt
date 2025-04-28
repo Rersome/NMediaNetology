@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.paging.LoadState
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.databinding.FragmentCardAdBinding
+import ru.netology.nmedia.databinding.FragmentItemLoadingBinding
 import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.CalculateValues.calculateNumber
 import ru.netology.nmedia.dto.FeedItem
@@ -31,27 +33,47 @@ class PostsAdapter(
     private val onInteractionListener: OnInteractionListener,
 ) : PagingDataAdapter<FeedItem, RecyclerView.ViewHolder>(PostDiffCallback()) {
 
-    override fun getItemViewType(position: Int): Int =
-        when (getItem(position)) {
+    private var prependState: LoadState = LoadState.NotLoading(false)
+    private var appendState: LoadState = LoadState.NotLoading(false)
+
+    fun setLoadStates(prepend: LoadState, append: LoadState) {
+        prependState = prepend
+        appendState = append
+        notifyDataSetChanged()
+    }
+
+    override fun getItemViewType(position: Int): Int = when {
+        showPrependLoading(position) -> R.layout.fragment_item_loading
+        showAppendLoading(position) -> R.layout.fragment_item_loading
+        else -> when (getItem(position)) {
             is Ad -> R.layout.fragment_card_ad
             is Post -> R.layout.card_post
             null -> error("unknown item type")
         }
+    }
 
-    var list = emptyList<Post>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+    private fun showPrependLoading(position: Int): Boolean {
+        return position == 0 && prependState is LoadState.Loading
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-        when (viewType) {
+    private fun showAppendLoading(position: Int): Boolean {
+        return position == itemCount - 1 && appendState is LoadState.Loading
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            R.layout.fragment_item_loading -> PostLoadingViewHolder(
+                FragmentItemLoadingBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                ),
+                {}
+            )
             R.layout.card_post -> {
-                val binding =
-                    CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 PostViewHolder(binding, onInteractionListener)
             }
-
             R.layout.fragment_card_ad -> {
                 val binding = FragmentCardAdBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -60,25 +82,31 @@ class PostsAdapter(
                 )
                 AdViewHolder(binding)
             }
-
             else -> error("unknown view type: $viewType")
         }
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (val item = getItem(position)) {
-            is Ad -> (holder as? AdViewHolder)?.bind(item)
-            is Post -> {
-                (holder as? PostViewHolder)?.bind(item)
+        when (holder) {
+            is PostLoadingViewHolder -> holder.bind(
+                when {
+                    showPrependLoading(position) -> prependState
+                    showAppendLoading(position) -> appendState
+                    else -> LoadState.NotLoading(false)
+                }
+            )
+            is AdViewHolder -> (getItem(position) as? Ad)?.let { holder.bind(it) }
+            is PostViewHolder -> (getItem(position) as? Post)?.let { post ->
+                holder.bind(post)
                 holder.itemView.setOnClickListener {
-                    onInteractionListener.onPostClick(item)
+                    onInteractionListener.onPostClick(post)
                 }
             }
-            null -> error("unknown item type: $item")
         }
     }
 }
 
-class AdViewHolder(
+private class AdViewHolder(
     private val binding: FragmentCardAdBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -90,7 +118,7 @@ class AdViewHolder(
 
 }
 
-class PostViewHolder(
+private class PostViewHolder(
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener,
 
@@ -170,7 +198,7 @@ class PostViewHolder(
     }
 }
 
-class PostDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
+private class PostDiffCallback : DiffUtil.ItemCallback<FeedItem>() {
     override fun areItemsTheSame(oldItem: FeedItem, newItem: FeedItem): Boolean {
         if (oldItem::class != newItem::class) {
             return false

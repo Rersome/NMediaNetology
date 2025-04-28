@@ -10,11 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.error.ApiError
@@ -34,7 +36,7 @@ private val empty = Post(
     reposts = 0L,
     author = "",
     content = "",
-    published = 0L, //TODO переделать
+    published = 0L,
     likedByMe = false,
     authorId = 0L
 )
@@ -42,7 +44,8 @@ private val empty = Post(
 @HiltViewModel
 class PostViewModel @Inject constructor(
     private val repository: PostRepository,
-    appAuth: AppAuth
+    appAuth: AppAuth,
+    private val appDb: AppDb
 ) : ViewModel() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -75,7 +78,7 @@ class PostViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    val edited = MutableLiveData(empty)
+    private val edited = MutableLiveData(empty)
     private var isEditingCanceled = false
 
     private val _photo = MutableLiveData<PhotoModel?>(null)
@@ -143,7 +146,16 @@ class PostViewModel @Inject constructor(
 
     fun likeById(id: Long) = viewModelScope.launch {
         try {
-            repository.likeById(id)
+            appDb.postDao().getById(id).firstOrNull()?.map {
+                it.copy(
+                    likedByMe = !it.likedByMe,
+                    likes = it.likes + if (it.likedByMe) -1 else 1)
+                if (it.likedByMe) {
+                    repository.unlikeById(id)
+                } else {
+                    repository.likeById(id)
+                }
+            }
         } catch (e: AppError) {
             when (e) {
                 is ApiError -> _dataState.value = FeedModelState(FeedError.API)
@@ -164,7 +176,10 @@ class PostViewModel @Inject constructor(
 
     fun removeById(id: Long) = viewModelScope.launch {
         try {
-            repository.removeById(id)
+            val post = appDb.postDao().getById(id).firstOrNull()
+            post.let {
+                repository.removeById(id)
+            }
         } catch (e: AppError) {
             when (e) {
                 is ApiError -> _dataState.value = FeedModelState(FeedError.API)
